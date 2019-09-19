@@ -10,14 +10,33 @@ export default new Router({
     routes: [{
         path: '/',
         component: require('./views/dashboard.vue').default,
+        redirect: {
+            name: 'brand'
+        },
         children: [{
-            path: '/notas-bruses',
-            name: 'brusesNotes',
-            component: require('./views/brusesNotes.vue').default
+            path: '/marcas',
+            name: 'brand',
+            component: require('./views/drawerPages/brands.vue').default
         }, {
-            path: '/notas-bruses2',
-            name: 'brusesNotes2',
-            component: require('./views/brusesNotes2.vue').default
+            path: '/tipos',
+            name: 'type',
+            component: require('./views/drawerPages/types.vue').default
+        }, {
+            path: '/productos/crear',
+            name: 'addProduct',
+            component: require('./views/drawerPages/addProduct.vue').default
+        }, {
+            path: '/productos/listado',
+            name: 'listProduct',
+            component: require('./views/drawerPages/listProducts.vue').default
+        }, {
+            path: '/ordenes/crear',
+            name: 'addOrder',
+            component: require('./views/drawerPages/addOrder.vue').default
+        }, {
+            path: '/ordenes/historial',
+            name: 'orderHistory',
+            component: require('./views/drawerPages/orderHistory.vue').default
         }]
     }]
 })
