@@ -11,6 +11,9 @@ import './views/globalComponents/globalComponents';
 
 Vue.config.productionTip = false
 
+import Chartist from "chartist";
+Vue.prototype.$Chartist = Chartist;
+
 //plugins
 import './plugins/formattedDate'
 
@@ -20,6 +23,9 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 new Vue({
     vuetify,
     router,
+    data: {
+        Chartist: Chartist
+    },
     store,
     render: h => h(App)
 }).$mount('#app')

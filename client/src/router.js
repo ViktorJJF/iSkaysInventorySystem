@@ -14,6 +14,10 @@ export default new Router({
             name: 'brand'
         },
         children: [{
+            path: '/estadisticas',
+            name: 'statistics',
+            component: require('./views/drawerPages/statistics.vue').default
+        }, {
             path: '/marcas',
             name: 'brand',
             component: require('./views/drawerPages/brands.vue').default

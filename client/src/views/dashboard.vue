@@ -19,14 +19,10 @@
       </v-menu>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" app>
+    <v-navigation-drawer dark v-model="drawer" app>
       <v-list>
         <v-list-item>
-          <v-img
-            aspect-ratio="1.7"
-            contain
-            src="https://cdn3.iconfinder.com/data/icons/vector-icons-6/96/256-512.png"
-          ></v-img>
+          <v-img aspect-ratio="1.7" contain src="/images/fulltec.jpeg"></v-img>
         </v-list-item>
         <v-list-item link>
           <v-list-item-content>
@@ -93,6 +89,11 @@ export default {
   data: () => ({
     drawer: null,
     items: [
+      {
+        icon: "mdi-format-list-bulleted",
+        text: "Panel de control",
+        to: "statistics"
+      },
       { icon: "mdi-format-list-bulleted", text: "Tipos", to: "type" },
       { icon: "mdi-cellphone-dock", text: "Marcas", to: "brand" }
     ],

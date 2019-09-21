@@ -2,8 +2,8 @@
   <v-container fluid>
     <v-card outlined>
       <v-container fluid>
-        <h1>Agregar producto</h1>
-        <v-row>
+        <h1>Agregar modelo</h1>
+        <v-row no-gutters>
           <v-col cols="12" sm="12">
             <p class="body-1 font-weight-bold">Modelo</p>
             <v-text-field outlined v-model="newProduct.model" placeholder="Nombre del modelo"></v-text-field>
@@ -61,12 +61,18 @@ export default {
     return {
       newProduct: {
         model: "",
+        brand: "",
+        type: "",
         color: "NEGRO",
         stock: 0,
         price: 0,
         description: ""
       }
     };
+  },
+  mounted() {
+    this.newProduct.brand = this.brands[0].name;
+    this.newProduct.type = this.types[0].name;
   },
   computed: {
     brands() {
