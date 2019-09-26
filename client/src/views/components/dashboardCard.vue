@@ -1,12 +1,12 @@
 <template>
-  <v-card>
+  <v-card outlined>
     <v-row no-gutters>
-      <v-col cols="12" sm="6" :style="{background:color}">
+      <v-col cols="12" sm="5" :style="{background:color}" class="pa-3">
         <v-row align="center" justify="center">
-          <v-icon color="white" :size="100" class="customIcon">mdi-account</v-icon>
+          <v-icon color="white" :size="90">{{icon}}</v-icon>
         </v-row>
       </v-col>
-      <v-col sm="6">
+      <v-col sm="7">
         <v-row align="center">
           <v-col cols="12" sm="12">
             <p class="display-1 font-weight-bold center-paragraph">{{qty}}</p>
@@ -20,7 +20,7 @@
 
 <script>
 export default {
-  props: ["title", "qty", "color"]
+  props: ["title", "qty", "color", "icon"]
 };
 </script>
 

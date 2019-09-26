@@ -1,40 +1,41 @@
 <template>
-  <v-container fluid>
-    <h1>Historial de órdenes</h1>
-    <v-data-table
-      :search="search"
-      hide-default-footer
-      :headers="headers"
-      :items="order"
-      sort-by="calories"
-      class="elevation-1"
-      @page-count="pageCount = $event"
-    >
-      <template v-slot:top>
-        <v-toolbar flat color="white">
-          <v-text-field
-            v-model="search"
-            append-icon="search"
-            label="Buscar venta"
-            single-line
-            hide-details
-          ></v-text-field>
-          <v-divider class="mx-4" inset vertical></v-divider>
-          <div class="flex-grow-1"></div>
-        </v-toolbar>
-      </template>
-      <template v-slot:no-data>
-        <v-alert type="error" :value="true">Aún no cuentas con un historial de ventas</v-alert>
-      </template>
-      <template v-slot:item.status="{item}">
-        <v-chip v-if="item.status" color="success">Activo</v-chip>
-        <v-chip v-else color="error">Inactivo</v-chip>
-      </template>
-    </v-data-table>
-    <div class="text-center pt-2">
-      <v-pagination v-model="page" :length="1"></v-pagination>
-    </div>
-  </v-container>
+  <custom-card title="Historial de ventas" icon="mdi-format-list-checks">
+    <template v-slot:content>
+      <v-data-table
+        :search="search"
+        hide-default-footer
+        :headers="headers"
+        :items="order"
+        sort-by="calories"
+        class="elevation-1"
+        @page-count="pageCount = $event"
+      >
+        <template v-slot:top>
+          <v-toolbar flat color="white">
+            <v-text-field
+              v-model="search"
+              append-icon="search"
+              label="Buscar venta"
+              single-line
+              hide-details
+            ></v-text-field>
+            <v-divider class="mx-4" inset vertical></v-divider>
+            <div class="flex-grow-1"></div>
+          </v-toolbar>
+        </template>
+        <template v-slot:no-data>
+          <v-alert type="error" :value="true">Aún no cuentas con un historial de ventas</v-alert>
+        </template>
+        <template v-slot:item.status="{item}">
+          <v-chip v-if="item.status" color="success">Activo</v-chip>
+          <v-chip v-else color="error">Inactivo</v-chip>
+        </template>
+      </v-data-table>
+      <div class="text-center pt-2">
+        <v-pagination v-model="page" :length="1"></v-pagination>
+      </div>
+    </template>
+  </custom-card>
 </template>
 
 <script>

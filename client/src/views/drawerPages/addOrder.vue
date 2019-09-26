@@ -1,10 +1,17 @@
 <template>
-  <v-container fluid>
-    <v-card outlined>
+  <custom-card title="Realizar venta" icon="mdi-plus">
+    <template v-slot:content>
       <v-container>
-        <h1>Órdenes</h1>
-        <v-btn color="primary" @click="addOrder">Agregar</v-btn>
-        <v-simple-table>
+        <v-btn color="primary" @click="addOrder">
+          <v-icon left>mdi-plus</v-icon>Agregar
+        </v-btn>
+        <v-alert
+          class="my-5"
+          v-show="order.length==0"
+          type="success"
+          text
+        >Aún no se agregaron productos a esta venta</v-alert>
+        <v-simple-table v-show="order.length>0">
           <template v-slot:default>
             <thead>
               <tr>
@@ -12,13 +19,14 @@
                 <th class="text-left">Cantidad</th>
                 <th class="text-left">Precio</th>
                 <th class="text-left">Subtotal</th>
-                <th class="text-left">Eliminar</th>
+                <th class="text-left">Eliminar producto</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(product,orderIndex) in order" :key="product.model">
                 <td>
                   <v-select
+                    placeholder="Seleccione el producto"
                     v-model="product.model"
                     :items="products"
                     item-text="model"
@@ -38,14 +46,16 @@
           </template>
         </v-simple-table>
         <v-row justify="end" class="mr-3">
-          <strong class="mr-3">Total:</strong>
-          &nbsp;
-          <span class="total">S/.{{getTotal()}}</span>
+          <v-card color="light-green lighten-5" class="pa-3">
+            <strong class="mr-3">Total:</strong>
+            &nbsp;
+            <span class="total">S/.{{getTotal()}}</span>
+          </v-card>
         </v-row>
         <v-btn color="success">Guardar orden</v-btn>
       </v-container>
-    </v-card>
-  </v-container>
+    </template>
+  </custom-card>
 </template>
 
 <script>
@@ -64,7 +74,7 @@ export default {
       this.order.push({
         id: 1,
         model: "",
-        qty: 0
+        qty: 1
       });
     },
     getProductPrice(model) {

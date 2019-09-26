@@ -9,6 +9,9 @@ import "@/assets/css/customStyles.css"
 // GLobal components
 import './views/globalComponents/globalComponents';
 
+// global axios
+import './bootstrap';
+
 Vue.config.productionTip = false
 
 import Chartist from "chartist";

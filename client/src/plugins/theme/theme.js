@@ -1,13 +1,13 @@
 export default {
     themes: {
         light: {
-            primary: '#458AC7',
-            secondary: '#424242',
-            accent: '#82B1FF',
+            primary: '#58508d',
+            secondary: '#003f5c',
+            accent: '#bc5090',
             error: '#FF5252',
             info: '#2196F3',
             success: '#4CAF50',
-            warning: '#FFC107',
+            warning: '#FFC450',
         }
     }
 }
