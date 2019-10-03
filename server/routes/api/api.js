@@ -39,6 +39,7 @@ router.post('/orders/create', ordersController.create);
 router.put('/orders/update/:id', ordersController.update);
 router.delete('/orders/delete/:id', ordersController.deletes);
 router.get('/orders/count', ordersController.count);
+router.get('/orders/count-by-date', ordersController.countByDate);
 //CRUD orderDetails
 router.get('/order-details/list', orderDetailsController.list);
 router.post('/order-details/create', orderDetailsController.create);

@@ -3,12 +3,23 @@
     <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
     <span class="title ml-3 mr-5">Fulltec</span>
     <v-spacer></v-spacer>
-    <v-btn icon>
-      <v-badge color="red" @click>
-        <template v-slot:badge>2</template>
-        <v-icon>mdi-email</v-icon>
-      </v-badge>
-    </v-btn>
+    <v-menu v-if="$store.state.token" offset-y>
+      <template v-slot:activator="{ on }">
+        <v-btn icon v-on="on">
+          <v-badge color="red" @click>
+            <template v-slot:badge>{{$store.state.stockAlert.length}}</template>
+            <v-icon>mdi-email</v-icon>
+          </v-badge>
+        </v-btn>
+      </template>
+      <v-list v-for="(alertMessage,i) in $store.state.stockAlert" :key="i">
+        <v-list-item>
+          Tu producto {{alertMessage.productName}} está por agortarse. (
+          <strong>Stock:</strong>
+          {{alertMessage.stock}})
+        </v-list-item>
+      </v-list>
+    </v-menu>
     <v-btn v-if="!$store.state.token" dark outlined :to="{name:'login'}">Iniciar Sesión</v-btn>
     <v-menu v-if="$store.state.token" offset-y>
       <template v-slot:activator="{ on }">

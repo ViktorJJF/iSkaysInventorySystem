@@ -3,7 +3,8 @@ const Product = require('../models/Products.js');
 const list = (req, res) => {
     let purchaseId = req.query.purchaseId;
     PurchaseDetail.find({
-        purchaseId
+        purchaseId,
+        status: true
     }).exec((err, payload) => {
         if (err) {
             return res.status(400).json({
@@ -24,20 +25,6 @@ const create = (req, res) => {
         productId: body.productId,
         purchasePrice: body.purchasePrice,
         qty: body.qty,
-    });
-
-    Product.findOne({
-        _id: body.productId
-    }, (err, product) => {
-        if (err) {
-            return console.log(err);
-        }
-        product.update({
-                stock: product.stock + body.qty
-            }, ).then((newStock) => {})
-            .catch((err) => {
-                console.log(err);
-            });
     });
 
     purchaseDetail.save((err, payload) => {

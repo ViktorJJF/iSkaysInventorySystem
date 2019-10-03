@@ -2,8 +2,11 @@
   <custom-card title="Realizar venta" icon="mdi-plus">
     <template v-slot:content>
       <v-container>
-        <v-btn color="primary" @click="addOrder">
+        <v-btn color="primary" @click="addOrder" class="mr-3 my-3">
           <v-icon left>mdi-plus</v-icon>Agregar
+        </v-btn>
+        <v-btn color="primary" :to="{name:'orderHistory'}">
+          <v-icon left>mdi-magnify</v-icon>Ver historial
         </v-btn>
         <v-alert
           class="my-5"
@@ -24,7 +27,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(product,orderIndex) in order" :key="product.productId">
+              <tr v-for="(product,orderIndex) in order" :key="orderIndex">
                 <td>
                   <v-container>
                     <v-select
@@ -121,6 +124,7 @@ export default {
       this.loadingButton = true;
       this.$store.dispatch("showOverlay", true);
       await this.apiCalls();
+      this.updateStoreStock();
       this.$store.dispatch("showSnackbar", {
         text: "Venta agregada con éxito",
         color: "success"
@@ -129,12 +133,22 @@ export default {
       this.$store.dispatch("showOverlay", false);
       this.order = [];
     },
+    updateStoreStock() {
+      this.order.forEach(detail => {
+        this.$store.dispatch("updateStock", {
+          type: "order",
+          productId: detail.productId,
+          qty: parseInt(detail.qty)
+        });
+      });
+    },
     apiCalls() {
       return new Promise((resolve, reject) => {
         //creating sale
         axios
           .post("/api/orders/create", { userId: this.$store.getters.getUserId })
           .then(res => {
+            this.$store.dispatch("addOrder", res.data.payload);
             //creating sale details
             let orderId = res.data.payload._id;
             this.order.forEach(product => {

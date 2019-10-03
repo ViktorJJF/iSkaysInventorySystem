@@ -1,6 +1,4 @@
 const Order = require('../models/Orders.js');
-const OrderDetail = require('../models/OrderDetails.js');
-const Product = require('../models/Products.js');
 const list = (req, res) => {
     Order.find({
         status: true
@@ -19,8 +17,35 @@ const list = (req, res) => {
         })
     });
 }
+const countByDate = (req, res) => {
+    Order.aggregate([{
+        $match: {
+            status: true
+        }
+    }, {
+        $group: {
+            _id: {
+                $month: '$createdAt'
+            },
+            count: {
+                $sum: 1
+            }
+        }
+    }], function (err, result) {
+        if (err) {
+            next(err);
+        } else {
+            res.json({
+                ok: true,
+                payload: result
+            })
+        }
+    });
+}
 const count = (req, res) => {
-    Order.count().exec((err, count) => {
+    Order.count({
+        status: true
+    }).exec((err, count) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
@@ -76,35 +101,11 @@ const update = (req, res) => {
 }
 const deletes = (req, res) => {
     let id = req.params.id;
-    let body = req.body;
-
-    OrderDetail.find({
-        orderId: id
-    }, (err, orderDetails) => {
-        orderDetails.forEach(detail => {
-            Product.findOne({
-                _id: detail.productId
-            }, (err, product) => {
-                if (err) {
-                    return console.log(err);
-                }
-                product.update({
-                        stock: product.stock + detail.qty
-                    }, ).then((newStock) => {})
-                    .catch((err) => {
-                        console.log(err);
-                    });
-            });
-        });
-    });
-    OrderDetail.deleteMany({
-        orderId: id
-    }, function (err, deletedCount) {
-        if (err) {
-            return console.log(err);
-        }
-    });
-    Order.findByIdAndRemove(id, (err, payload) => {
+    Order.findOneAndUpdate({
+        _id: id
+    }, {
+        status: false
+    }, (err, payload) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
@@ -125,5 +126,6 @@ module.exports = {
     create,
     update,
     deletes,
-    count
+    count,
+    countByDate
 }

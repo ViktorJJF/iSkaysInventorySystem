@@ -66,7 +66,7 @@
                           v-model="editedItem.description"
                         ></v-textarea>
                       </v-col>
-                      <v-col cols="12" sm="12" md="12">
+                      <!-- <v-col cols="12" sm="12" md="12">
                         <span class="font-weight-bold">Estado</span>
                         <v-select
                           dense
@@ -77,7 +77,7 @@
                           item-value="value"
                           outlined
                         ></v-select>
-                      </v-col>
+                      </v-col>-->
                     </v-row>
                   </v-container>
                   <v-card-actions>
@@ -143,21 +143,21 @@ export default {
         value: "name",
         class: "header-styles"
       },
-      {
-        text: "Descripción",
-        align: "left",
-        width: "40%",
-        sortable: false,
-        value: "description",
-        filterable: false
-      },
+      // {
+      //   text: "Descripción",
+      //   align: "left",
+      //   width: "40%",
+      //   sortable: false,
+      //   value: "description",
+      //   filterable: false
+      // },
       {
         text: "Agregado",
         align: "left",
         sortable: true,
         value: "createdAt"
       },
-      { text: "Estado", value: "status" },
+      // { text: "Estado", value: "status" },
       { text: "Acciones", value: "action", sortable: false }
     ],
     types: [],

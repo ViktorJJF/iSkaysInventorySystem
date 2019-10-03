@@ -22,9 +22,8 @@ let orderDetailSchema = new Schema({
 
 });
 
-orderDetailSchema.pre('save', function () {
-    console.log("llego esta data: ", this);
-    // await middlewares.updateStock();
+orderDetailSchema.post('save', async function (createdOrderDetail) {
+    await middlewares.updateStock(createdOrderDetail.productId, -createdOrderDetail.qty);
 });
 
 module.exports = mongoose.model('OrderDetails', orderDetailSchema);

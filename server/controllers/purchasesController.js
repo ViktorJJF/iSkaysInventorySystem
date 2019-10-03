@@ -2,7 +2,9 @@ const Purchase = require('../models/Purchases.js');
 const PurchaseDetail = require('../models/PurchaseDetails.js');
 const Product = require('../models/Products.js');
 const list = (req, res) => {
-    Purchase.find().sort({
+    Purchase.find({
+        status: true
+    }).sort({
         'createdAt': 'desc'
     }).exec((err, payload) => {
         if (err) {
@@ -18,7 +20,9 @@ const list = (req, res) => {
     });
 }
 const count = (req, res) => {
-    Purchase.count().exec((err, count) => {
+    Purchase.count({
+        status: true
+    }).exec((err, count) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
@@ -74,36 +78,11 @@ const update = (req, res) => {
 }
 const deletes = (req, res) => {
     let id = req.params.id;
-    let body = req.body;
-    PurchaseDetail.find().exec((err, payload) => {});
-    PurchaseDetail.find({
-        purchaseId: id
-    }, (err, PurchaseDetails) => {
-        PurchaseDetails.forEach(detail => {
-            Product.findOne({
-                _id: detail.productId
-            }, (err, product) => {
-                if (err) {
-                    return console.log(err);
-                }
-                product.update({
-                        stock: product.stock - detail.qty
-                    }, ).then((newStock) => {})
-                    .catch((err) => {
-                        console.log(err);
-                    });
-            });
-        });
-    });
-    PurchaseDetail.deleteMany({
-        purchaseId: id
-    }, function (err, deletedCount) {
-        if (err) {
-            return console.log(err);
-        }
-    });
-    PurchaseDetail.find().exec((err, payload) => {});
-    Purchase.findByIdAndRemove(id, (err, payload) => {
+    Purchase.findOneAndUpdate({
+        _id: id
+    }, {
+        status: false
+    }, (err, payload) => {
         if (err) {
             return res.status(400).json({
                 ok: false,

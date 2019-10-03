@@ -59,19 +59,25 @@
         </v-col>
       </v-row>
       <v-container>
-        <v-row justify="space-around">
-          <v-col cols="12" sm="6">
+        <v-row justify="center">
+          <v-col cols="12" sm="5">
             <v-card outlined>
               <v-card-title>
-                <span class="headline">Ganancias anuales</span>
+                <span class="headline">Ventas mensuales</span>
               </v-card-title>
               <v-divider></v-divider>
               <v-container fluid>
-                <apex-chart width="500" type="line" :options="options" :series="series"></apex-chart>
+                <apex-chart
+                  v-if="isDataReady"
+                  width="500"
+                  type="line"
+                  :options="options"
+                  :series="series"
+                ></apex-chart>
               </v-container>
             </v-card>
           </v-col>
-          <v-col cols="12" sm="6">
+          <!-- <v-col cols="12" sm="6">
             <v-card outlined>
               <v-card-title>
                 <span class="headline">Ventas anuales</span>
@@ -81,7 +87,7 @@
                 <apex-chart width="500" type="bar" :options="options" :series="series2"></apex-chart>
               </v-container>
             </v-card>
-          </v-col>
+          </v-col>-->
         </v-row>
       </v-container>
     </template>
@@ -94,24 +100,46 @@ import apexChart from "vue-apexcharts";
 export default {
   data() {
     return {
+      isDataReady: false,
+      months: [
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre"
+      ],
       options: {
         chart: {
           id: "vuechart-example"
         },
         xaxis: {
-          categories: [2017, 2018, 2019, 2020, 2021]
+          categories: [
+            "Enero",
+            "Febrero",
+            "Marzo",
+            "Abril",
+            "Mayo",
+            "Junio",
+            "Julio",
+            "Agosto",
+            "Septiembre",
+            "Octubre",
+            "Noviembre",
+            "Diciembre"
+          ]
         }
       },
       series: [
         {
-          name: "Ganancias (S/.)",
-          data: [3000, 4000, 4500, 5000, 7000]
-        }
-      ],
-      series2: [
-        {
-          name: "Ventas (S/.)",
-          data: [3000, 4000, 4500, 5000, 7000]
+          name: "Cantidad",
+          data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         }
       ]
     };
@@ -119,6 +147,29 @@ export default {
   components: {
     dashboardCard,
     apexChart
+  },
+  mounted() {
+    this.getInitialData();
+  },
+  methods: {
+    async getInitialData() {
+      //count orders
+      await this.$store.dispatch("countOrders");
+      //count purchases
+      await this.$store.dispatch("countPurchases");
+      axios
+        .get("/api/orders/count-by-date")
+        .then(res => {
+          let datas = res.data.payload;
+          datas.forEach(data => {
+            this.series[0].data[parseInt(data._id)] = data.count;
+          });
+          this.isDataReady = true;
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    }
   },
   computed: {
     getProducts() {

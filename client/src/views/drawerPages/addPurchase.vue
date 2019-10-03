@@ -2,8 +2,11 @@
   <custom-card title="Realizar compra" icon="mdi-plus">
     <template v-slot:content>
       <v-container>
-        <v-btn color="primary" @click="addpurchase">
+        <v-btn color="primary" @click="addpurchase" class="mr-3 my-3">
           <v-icon left>mdi-plus</v-icon>Agregar
+        </v-btn>
+        <v-btn color="primary" :to="{name:'historyPurchase'}">
+          <v-icon left>mdi-magnify</v-icon>Ver historial
         </v-btn>
         <v-alert
           class="my-5"
@@ -137,7 +140,6 @@ export default {
           .then(res => {
             //creating sale details
             let purchaseId = res.data.payload._id;
-            console.log("llego este purchase Id: ", purchaseId);
             this.purchase.forEach(product => {
               axios
                 .post("/api/purchase-details/create", {

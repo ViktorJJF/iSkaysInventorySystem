@@ -29,7 +29,8 @@ export default new Vuex.Store({
     orders: [],
     totalOrders: 0,
     purchases: [],
-    totalPurchases: 0
+    totalPurchases: 0,
+    stockAlert: []
   },
   mutations: {
     updateMasterPoints(state, qty) {
@@ -94,6 +95,9 @@ export default new Vuex.Store({
     addProduct(state, newProduct) {
       state.products.push(newProduct);
     },
+    addOrder(state, newOrder) {
+      state.orders.push(newOrder);
+    },
     updateStock(state, {
       type,
       productId,
@@ -112,9 +116,20 @@ export default new Vuex.Store({
         default:
           break;
       }
+      if (product.stock < 5) {
+        state.stockAlert.push({
+          productName: product.model,
+          stock: product.stock,
+        });
+      }
     }
   },
   actions: {
+    addOrder({
+      commit
+    }, newOrder) {
+      commit("addOrder", newOrder)
+    },
     updateStock({
       commit
     }, {
@@ -301,11 +316,11 @@ export default new Vuex.Store({
       commit
     }, user) {
       return new Promise((resolve, reject) => {
-        if (user.email != "admin@gmail.com" || user.password != "123456") {
+        if (user.email.toLowerCase() != "admin@gmail.com" || user.password != "123456") {
           reject("Usuario o contraseña incorrectos");
         } else {
           let user = {
-            _id: "123123abcquew",
+            _id: "5d9670e8d2519c2bb88d829f",
             firstName: "Administrador",
             lastName: "Fulltec",
             email: "admin@gmail.com",

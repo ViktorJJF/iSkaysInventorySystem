@@ -37,18 +37,19 @@
         <v-pagination v-model="page" :length="pageCount"></v-pagination>
       </div>
       <v-dialog v-model="dialog" width="500">
-        <v-card v-if="isDataReady">
+        <v-card>
           <v-toolbar color="secondary" dark>
             <v-toolbar-title>Detalle de venta</v-toolbar-title>
           </v-toolbar>
           <v-container>
             <p>
               <strong>ID de la venta:</strong>
-              {{orders[selectedOrder]._id}}
+              {{orders.length>0?orders[selectedOrder]._id:""}}
             </p>
             <p>
               <strong>Usuario:</strong>
-              {{orders[selectedOrder].userId}}
+              <!-- {{orders.length>0?orders[selectedOrder].userId:""}} -->
+              Administrador
             </p>
             <p>
               <strong>Detalle de productos:</strong>
@@ -142,17 +143,16 @@ export default {
 
   methods: {
     async initialData() {
-      let orders = this.$store.getters.getOrders;
-      if (orders.length > 0) {
-        this.orders = customCopyObject(orders);
-      } else {
-        this.orders = await this.$store.dispatch("loadInitialOrders");
-      }
+      // let orders = this.$store.getters.getOrders;
+      // if (orders.length > 0) {
+      // this.orders = customCopyObject(orders);
+      // } else {
+      this.orders = await this.$store.dispatch("loadInitialOrders");
+      // }
       this.isDataReady = true;
     },
     showOrderDetail(item) {
       this.selectedOrder = this.orders.indexOf(item);
-      console.log("se selecciono: ", this.orders[this.selectedOrder]);
       let orderId = this.orders[this.selectedOrder]._id;
       axios
         .get("/api/order-details/list", { params: { orderId } })
@@ -177,6 +177,7 @@ export default {
           "¿Seguro que deseas eliminar esta venta? Se sumará el stock a los productos del detalle"
         )
       ) {
+        this.updateStoreStock(orderId);
         this.$store.dispatch("showOverlay", true);
         customHttpRequest(
           "delete",
@@ -184,10 +185,30 @@ export default {
           null,
           () => {
             this.$store.dispatch("showOverlay", false);
+            this.orders.splice(index, 1);
           }
         );
-        this.orders.splice(index, 1);
       }
+    },
+    updateStoreStock(orderId) {
+      axios
+        .get("/api/order-details/list", { params: { orderId } })
+        .then(res => {
+          console.log(res);
+          if (res.data.ok) {
+            let orderDetails = res.data.payload;
+            orderDetails.forEach(detail => {
+              this.$store.dispatch("updateStock", {
+                type: "order",
+                productId: detail.productId,
+                qty: -parseInt(detail.qty)
+              });
+            });
+          }
+        })
+        .catch(err => {
+          console.error(err);
+        });
     }
   }
 };

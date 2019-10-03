@@ -42,16 +42,16 @@
           <v-container>
             <p>
               <strong>ID de la compra:</strong>
-              {{purchases[selectedOrder]._id}}
+              {{purchases.length>0?purchases[selectedOrder]._id:""}}
             </p>
             <p>
               <strong>Usuario:</strong>
-              {{purchases[selectedOrder].userId}}
+              <!-- {{purchases.length>0?purchases[selectedOrder].userId:""}} -->
+              Administrador
             </p>
             <p>
               <strong>Detalle de productos comprados:</strong>
             </p>
-            {{purchaseDetails}}
             <v-simple-table>
               <template v-slot:default>
                 <thead>
@@ -144,12 +144,12 @@ export default {
 
   methods: {
     async initialData() {
-      let purchases = this.$store.getters.getPurchases;
-      if (purchases.length > 0) {
-        this.purchases = customCopyObject(purchases);
-      } else {
-        this.purchases = await this.$store.dispatch("loadInitialPurchases");
-      }
+      // let purchases = this.$store.getters.getPurchases;
+      // if (purchases.length > 0) {
+      // this.purchases = customCopyObject(purchases);
+      // } else {
+      this.purchases = await this.$store.dispatch("loadInitialPurchases");
+      // }
       this.isDataReady = true;
     },
     showOrderDetail(item) {
@@ -178,6 +178,7 @@ export default {
           "¿Seguro que deseas eliminar esta compra? Se sumará el stock a los productos del detalle"
         )
       ) {
+        this.updateStoreStock(purchaseId);
         this.$store.dispatch("showOverlay", true);
         customHttpRequest(
           "delete",
@@ -185,21 +186,18 @@ export default {
           null,
           () => {
             this.$store.dispatch("showOverlay", false);
-            this.updateStoreStock(purchaseId);
             this.purchases.splice(index, 1);
           }
         );
       }
     },
     updateStoreStock(purchaseId) {
-      console.log("se eliminara esta compra: ", purchaseId);
       axios
         .get("/api/purchase-details/list", { params: { purchaseId } })
         .then(res => {
           console.log(res);
           if (res.data.ok) {
             let purchaseDetails = res.data.payload;
-            console.log("se eliminaran estos productos: ", purchaseDetails);
             purchaseDetails.forEach(detail => {
               this.$store.dispatch("updateStock", {
                 type: "purchase",

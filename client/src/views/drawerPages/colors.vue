@@ -57,7 +57,7 @@
                           placeholder="Nombre del color del producto"
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="12" md="12">
+                      <!-- <v-col cols="12" sm="12" md="12">
                         <span class="font-weight-bold">Estado</span>
                         <v-select
                           dense
@@ -68,7 +68,7 @@
                           item-value="value"
                           outlined
                         ></v-select>
-                      </v-col>
+                      </v-col>-->
                     </v-row>
                   </v-container>
                   <v-card-actions>
@@ -140,7 +140,7 @@ export default {
         sortable: true,
         value: "createdAt"
       },
-      { text: "Estado", value: "status" },
+      // { text: "Estado", value: "status" },
       { text: "Acciones", value: "action", sortable: false }
     ],
     colors: [],
