@@ -4,7 +4,6 @@ let Schema = mongoose.Schema;
 let productSchema = new Schema({
     model: {
         type: String,
-        unique: [true, "El nombre del modelo ya estaba registrado"],
         required: [true, "El nombre del modelo es requerido"],
     },
     typeId: {
@@ -41,5 +40,6 @@ let productSchema = new Schema({
 }, {
     timestamps: true
 });
+
 
 module.exports = mongoose.model('Products', productSchema);

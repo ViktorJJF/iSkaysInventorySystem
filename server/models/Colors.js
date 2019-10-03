@@ -4,7 +4,6 @@ let Schema = mongoose.Schema;
 let colorSchema = new Schema({
     name: {
         type: String,
-        unique: [true, "El color ya estaba registrado"],
         required: [true, "El color es requerido"],
     },
     status: {

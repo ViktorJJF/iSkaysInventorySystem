@@ -146,6 +146,7 @@ export default {
           if (err) {
             return (this.loadingButton = false);
           }
+          this.$store.dispatch("addProduct", callback);
           this.loadingButton = false;
           this.newProduct = customCopyObject(Product);
         }

@@ -2,7 +2,9 @@ const Order = require('../models/Orders.js');
 const OrderDetail = require('../models/OrderDetails.js');
 const Product = require('../models/Products.js');
 const list = (req, res) => {
-    Order.find().sort({
+    Order.find({
+        status: true
+    }).sort({
         'createdAt': 'desc'
     }).exec((err, payload) => {
         if (err) {

@@ -4,7 +4,6 @@ let Schema = mongoose.Schema;
 let brandSchema = new Schema({
     name: {
         type: String,
-        unique: [true, "El nombre de la marca ya estaba registrado"],
         required: [true, "El nombre de la marca es requerido"],
     },
     description: String,

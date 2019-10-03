@@ -4,14 +4,19 @@ let Schema = mongoose.Schema;
 let purchaseDetailSchema = new Schema({
     purchaseId: {
         type: Schema.Types.ObjectId,
-        ref: 'Orders'
+        ref: 'Purchases'
     },
     productId: {
         type: Schema.Types.ObjectId,
-        ref: 'Products'
+        ref: 'Products',
+        required: [true, "El color es requerido"]
     },
     purchasePrice: Number,
-    qty: Number
+    qty: Number,
+    status: {
+        type: Boolean,
+        default: true
+    }
 
 });
 

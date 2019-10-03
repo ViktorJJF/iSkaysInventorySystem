@@ -1,6 +1,8 @@
 const Product = require('../models/Products.js');
 const list = (req, res) => {
-    Product.find().sort({
+    Product.find({
+        status: true
+    }).sort({
         model: 'desc'
     }).exec((err, payload) => {
         if (err) {
@@ -51,9 +53,11 @@ const create = (req, res) => {
     });
 }
 const update = (req, res) => {
-    let id = req.params.id;
-    let body = req.body;
-    Product.findByIdAndUpdate(id, body, {
+    const filter = {
+        _id: req.params.id
+    };
+    const update = req.body;
+    Product.findOneAndUpdate(filter, update, {
         new: true
     }, (err, payload) => {
         if (err) {
@@ -79,8 +83,9 @@ const update = (req, res) => {
 }
 const deletes = (req, res) => {
     let id = req.params.id;
-    let body = req.body;
-    Product.findByIdAndRemove(id, (err, payload) => {
+    Product.findByIdAndUpdate(id, {
+        status: false
+    }, (err, payload) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
@@ -90,7 +95,7 @@ const deletes = (req, res) => {
         }
         res.json({
             ok: true,
-            message: "Modelo eliminado con éxito",
+            message: "Producto eliminado con éxito",
             payload
         });
     });

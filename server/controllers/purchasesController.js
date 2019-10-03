@@ -75,9 +75,9 @@ const update = (req, res) => {
 const deletes = (req, res) => {
     let id = req.params.id;
     let body = req.body;
-
+    PurchaseDetail.find().exec((err, payload) => {});
     PurchaseDetail.find({
-        PurchaseId: id
+        purchaseId: id
     }, (err, PurchaseDetails) => {
         PurchaseDetails.forEach(detail => {
             Product.findOne({
@@ -96,12 +96,13 @@ const deletes = (req, res) => {
         });
     });
     PurchaseDetail.deleteMany({
-        PurchaseId: id
+        purchaseId: id
     }, function (err, deletedCount) {
         if (err) {
             return console.log(err);
         }
     });
+    PurchaseDetail.find().exec((err, payload) => {});
     Purchase.findByIdAndRemove(id, (err, payload) => {
         if (err) {
             return res.status(400).json({

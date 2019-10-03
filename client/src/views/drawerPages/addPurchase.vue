@@ -107,13 +107,25 @@ export default {
     async savepurchase() {
       if (!this.validateForm()) return false;
       this.loadingButton = true;
+      this.$store.dispatch("showOverlay", true);
       await this.apiCalls();
+      this.updateStoreStock();
       this.$store.dispatch("showSnackbar", {
         text: "Venta agregada con éxito",
         color: "success"
       });
       this.loadingButton = false;
+      this.$store.dispatch("showOverlay", false);
       this.purchase = [];
+    },
+    updateStoreStock() {
+      this.purchase.forEach(detail => {
+        this.$store.dispatch("updateStock", {
+          type: "purchase",
+          productId: detail.productId,
+          qty: parseInt(detail.qty)
+        });
+      });
     },
     apiCalls() {
       return new Promise((resolve, reject) => {
@@ -125,6 +137,7 @@ export default {
           .then(res => {
             //creating sale details
             let purchaseId = res.data.payload._id;
+            console.log("llego este purchase Id: ", purchaseId);
             this.purchase.forEach(product => {
               axios
                 .post("/api/purchase-details/create", {

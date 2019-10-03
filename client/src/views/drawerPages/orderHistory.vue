@@ -8,6 +8,8 @@
         </p>
       </v-col>
       <v-data-table
+        :loading="!isDataReady"
+        loading-text="Cargando datos"
         hide-default-footer
         :headers="headers"
         :items="orders"
@@ -175,7 +177,15 @@ export default {
           "¿Seguro que deseas eliminar esta venta? Se sumará el stock a los productos del detalle"
         )
       ) {
-        customHttpRequest("delete", "/api/orders/delete/" + orderId);
+        this.$store.dispatch("showOverlay", true);
+        customHttpRequest(
+          "delete",
+          "/api/orders/delete/" + orderId,
+          null,
+          () => {
+            this.$store.dispatch("showOverlay", false);
+          }
+        );
         this.orders.splice(index, 1);
       }
     }

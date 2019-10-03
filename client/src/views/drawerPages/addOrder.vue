@@ -119,12 +119,14 @@ export default {
     async saveOrder() {
       if (!this.validateForm()) return false;
       this.loadingButton = true;
+      this.$store.dispatch("showOverlay", true);
       await this.apiCalls();
       this.$store.dispatch("showSnackbar", {
         text: "Venta agregada con éxito",
         color: "success"
       });
       this.loadingButton = false;
+      this.$store.dispatch("showOverlay", false);
       this.order = [];
     },
     apiCalls() {

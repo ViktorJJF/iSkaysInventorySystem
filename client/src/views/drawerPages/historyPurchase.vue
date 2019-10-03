@@ -8,6 +8,8 @@
         </p>
       </v-col>
       <v-data-table
+        :loading="!isDataReady"
+        loading-text="Cargando datos"
         hide-default-footer
         :headers="headers"
         :items="purchases"
@@ -49,6 +51,7 @@
             <p>
               <strong>Detalle de productos comprados:</strong>
             </p>
+            {{purchaseDetails}}
             <v-simple-table>
               <template v-slot:default>
                 <thead>
@@ -151,7 +154,6 @@ export default {
     },
     showOrderDetail(item) {
       this.selectedOrder = this.purchases.indexOf(item);
-      console.log("se selecciono: ", this.purchases[this.selectedOrder]);
       let purchaseId = this.purchases[this.selectedOrder]._id;
       axios
         .get("/api/purchase-details/list", { params: { purchaseId } })
@@ -176,9 +178,40 @@ export default {
           "¿Seguro que deseas eliminar esta compra? Se sumará el stock a los productos del detalle"
         )
       ) {
-        customHttpRequest("delete", "/api/purchases/delete/" + purchaseId);
-        this.purchases.splice(index, 1);
+        this.$store.dispatch("showOverlay", true);
+        customHttpRequest(
+          "delete",
+          "/api/purchases/delete/" + purchaseId,
+          null,
+          () => {
+            this.$store.dispatch("showOverlay", false);
+            this.updateStoreStock(purchaseId);
+            this.purchases.splice(index, 1);
+          }
+        );
       }
+    },
+    updateStoreStock(purchaseId) {
+      console.log("se eliminara esta compra: ", purchaseId);
+      axios
+        .get("/api/purchase-details/list", { params: { purchaseId } })
+        .then(res => {
+          console.log(res);
+          if (res.data.ok) {
+            let purchaseDetails = res.data.payload;
+            console.log("se eliminaran estos productos: ", purchaseDetails);
+            purchaseDetails.forEach(detail => {
+              this.$store.dispatch("updateStock", {
+                type: "purchase",
+                productId: detail.productId,
+                qty: -parseInt(detail.qty)
+              });
+            });
+          }
+        })
+        .catch(err => {
+          console.error(err);
+        });
     }
   }
 };

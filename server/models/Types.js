@@ -6,7 +6,6 @@ let Schema = mongoose.Schema;
 let typeSchema = new Schema({
     name: {
         type: String,
-        unique: [true, "El nombre del tipo ya estaba registrado"],
         required: [true, "El nombre del tipo es requerido"],
     },
     description: String,

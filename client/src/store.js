@@ -90,9 +90,49 @@ export default new Vuex.Store({
     },
     countPurchases(state, payload) {
       state.totalPurchases = payload;
+    },
+    addProduct(state, newProduct) {
+      state.products.push(newProduct);
+    },
+    updateStock(state, {
+      type,
+      productId,
+      qty
+    }) {
+      let product;
+      switch (type) {
+        case "order":
+          product = state.products.find(product => product._id === productId);
+          product.stock -= qty;
+          break;
+        case "purchase":
+          product = state.products.find(product => product._id === productId);
+          product.stock += qty;
+          break;
+        default:
+          break;
+      }
     }
   },
   actions: {
+    updateStock({
+      commit
+    }, {
+      type,
+      productId,
+      qty
+    }) {
+      commit("updateStock", {
+        type,
+        productId,
+        qty
+      });
+    },
+    addProduct({
+      commit
+    }, newProduct) {
+      commit("addProduct", newProduct);
+    },
     countOrders({
       commit
     }) {
