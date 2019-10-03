@@ -18,6 +18,14 @@
         </v-col>
         <v-col cols="12" sm="3">
           <dashboard-card
+            title="Productos(Modelos)"
+            :qty="$store.getters.getProducts.length"
+            color="#FF7858"
+            icon="mdi-cellphone-link"
+          ></dashboard-card>
+        </v-col>
+        <v-col cols="12" sm="3">
+          <dashboard-card
             title="Tipos"
             :qty="types.length"
             color="#FF7858"
@@ -32,33 +40,48 @@
             icon="mdi-cellphone-dock"
           ></dashboard-card>
         </v-col>
+
         <v-col cols="12" sm="3">
-          <dashboard-card title="Modelos" :qty="3" color="#FF7858" icon="mdi-cellphone-link"></dashboard-card>
+          <dashboard-card
+            title="Ventas"
+            :qty="$store.getters.getTotalOrders"
+            color="#FED762"
+            icon="mdi-chart-line"
+          ></dashboard-card>
         </v-col>
         <v-col cols="12" sm="3">
-          <dashboard-card title="Ventas" :qty="0" color="#FED762" icon="mdi-chart-line"></dashboard-card>
+          <dashboard-card
+            title="Compras"
+            :qty="$store.getters.getTotalPurchases"
+            color="#FED762"
+            icon="mdi-store"
+          ></dashboard-card>
         </v-col>
       </v-row>
       <v-container>
         <v-row justify="space-around">
-          <v-card outlined>
-            <v-card-title>
-              <span class="headline">Ganancias anuales</span>
-            </v-card-title>
-            <v-divider></v-divider>
-            <v-container fluid>
-              <apex-chart width="500" type="line" :options="options" :series="series"></apex-chart>
-            </v-container>
-          </v-card>
-          <v-card outlined>
-            <v-card-title>
-              <span class="headline">Ventas anuales</span>
-            </v-card-title>
-            <v-divider></v-divider>
-            <v-container fluid>
-              <apex-chart width="500" type="bar" :options="options" :series="series2"></apex-chart>
-            </v-container>
-          </v-card>
+          <v-col cols="12" sm="6">
+            <v-card outlined>
+              <v-card-title>
+                <span class="headline">Ganancias anuales</span>
+              </v-card-title>
+              <v-divider></v-divider>
+              <v-container fluid>
+                <apex-chart width="500" type="line" :options="options" :series="series"></apex-chart>
+              </v-container>
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-card outlined>
+              <v-card-title>
+                <span class="headline">Ventas anuales</span>
+              </v-card-title>
+              <v-divider></v-divider>
+              <v-container fluid>
+                <apex-chart width="500" type="bar" :options="options" :series="series2"></apex-chart>
+              </v-container>
+            </v-card>
+          </v-col>
         </v-row>
       </v-container>
     </template>

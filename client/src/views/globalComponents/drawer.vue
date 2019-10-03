@@ -4,7 +4,7 @@
       <v-list-item>
         <v-img aspect-ratio="1.7" contain src="/images/fulltec.jpeg"></v-img>
       </v-list-item>
-      <v-list-item link>
+      <v-list-item link :to="{name:'userProfile'}">
         <v-list-item-content>
           <v-list-item-title class="title">{{user}}</v-list-item-title>
           <v-list-item-subtitle>{{email}}</v-list-item-subtitle>
@@ -68,26 +68,21 @@ export default {
           to: "statistics"
         },
         {
+          icon: "mdi-account",
+          text: "Usuarios",
+          to: "userProfile"
+        },
+        {
           icon: "mdi-format-list-checks",
           text: "Inventario",
           to: "listProduct"
         },
 
         { icon: "mdi-format-list-bulleted", text: "Tipos", to: "type" },
-        { icon: "mdi-cellphone-dock", text: "Marcas", to: "brand" }
+        { icon: "mdi-cellphone-dock", text: "Marcas", to: "brand" },
+        { icon: "mdi-format-color-fill", text: "Colores", to: "colors" }
       ],
       expansionItems: [
-        {
-          icon: "mdi-cellphone-link",
-          title: "Modelos",
-          items: [
-            {
-              icon: "mdi-library-plus",
-              title: "Agregar modelo",
-              to: "addProduct"
-            }
-          ]
-        },
         {
           icon: "mdi-chart-line",
           title: "Ventas",
@@ -101,6 +96,22 @@ export default {
               icon: "mdi-format-list-checks",
               title: "Historial de ventas",
               to: "orderHistory"
+            }
+          ]
+        },
+        {
+          icon: "mdi-store",
+          title: "Compras",
+          items: [
+            {
+              icon: "mdi-library-plus",
+              title: "Agregar compra",
+              to: "addPurchase"
+            },
+            {
+              icon: "mdi-format-list-checks",
+              title: "Historial de compras",
+              to: "historyPurchase"
             }
           ]
         }

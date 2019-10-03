@@ -20,7 +20,7 @@ export default {
     source: String
   },
   data: () => ({
-    isDataReady: true
+    isDataReady: false
   }),
   computed: {
     overlay() {
@@ -28,6 +28,32 @@ export default {
     },
     overlayText() {
       return this.$store.state.overlay.text;
+    }
+  },
+  mounted() {
+    this.initialData();
+  },
+  methods: {
+    async initialData() {
+      this.$store.dispatch("showOverlay", true);
+      //initial brands
+      await this.$store.dispatch("loadInitialBrands");
+      //initial types
+      await this.$store.dispatch("loadInitialTypes");
+      //initial colors
+      await this.$store.dispatch("loadInitialColors");
+      //initial inventory
+      await this.$store.dispatch("loadInitialInventory");
+      //count orders
+      await this.$store.dispatch("countOrders");
+      //count purchases
+      await this.$store.dispatch("countPurchases");
+      this.isDataReady = true;
+      this.$store.dispatch("showOverlay", false);
+      this.$store.dispatch("showSnackbar", {
+        text: "Bienvenido",
+        color: "success"
+      });
     }
   }
 };

@@ -12,6 +12,10 @@ import './views/globalComponents/globalComponents';
 // global axios
 import './bootstrap';
 
+//vee validate
+import "./plugins/vee-validate";
+
+
 Vue.config.productionTip = false
 
 import Chartist from "chartist";

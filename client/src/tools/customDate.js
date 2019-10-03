@@ -7,4 +7,5 @@ export default function day_month_year(dateInMilliseconds) {
     };
     let result = time.toLocaleDateString('es-ES', options);
     return time.toLocaleString();
+    return result;
 }

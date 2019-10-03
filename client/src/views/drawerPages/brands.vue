@@ -10,6 +10,8 @@
         sort-by="calories"
         class="elevation-1"
         @page-count="pageCount = $event"
+        :page.sync="page"
+        :items-per-page="itemsPerPage"
       >
         <template v-slot:top>
           <v-container>
@@ -17,6 +19,7 @@
               <v-col cols="12" sm="4">
                 <span class="font-weight-bold">Filtrar por nombre: {{search}}</span>
                 <v-text-field
+                  dense
                   hide-details
                   v-model="search"
                   append-icon="search"
@@ -36,6 +39,11 @@
                   </v-card-title>
                   <v-divider></v-divider>
                   <v-container class="pa-5">
+                    <v-alert
+                      text
+                      type="error"
+                      :value="validateError"
+                    >Es necesario colocar el nombre de la marca</v-alert>
                     <v-row dense>
                       <v-col cols="12" sm="12" md="12">
                         <p class="body-1 font-weight-bold">Nombre</p>
@@ -61,7 +69,7 @@
                         <v-select
                           hide-details
                           v-model="editedItem.status"
-                          :items="[{name:'Activo',value:1},{name:'Inactivo',value:0}]"
+                          :items="[{name:'Activo',value:true},{name:'Inactivo',value:false}]"
                           item-text="name"
                           item-value="value"
                           outlined
@@ -72,7 +80,7 @@
                   <v-card-actions>
                     <div class="flex-grow-1"></div>
                     <v-btn outlined color="error" text @click="close">Cancelar</v-btn>
-                    <v-btn color="success" @click="save">Guardar</v-btn>
+                    <v-btn :loading="loadingButton" color="success" @click="save">Guardar</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
@@ -86,26 +94,38 @@
         <template v-slot:no-data>
           <v-alert type="error" :value="true">Aún no cuentas con marcas de productos</v-alert>
         </template>
+        <template v-slot:item.createdAt="{ item }">{{item.createdAt | dateFormat}}</template>
         <template v-slot:item.status="{item}">
           <v-chip v-if="item.status" color="success">Activo</v-chip>
           <v-chip v-else color="error">Inactivo</v-chip>
         </template>
       </v-data-table>
       <div class="text-center pt-2">
-        <v-pagination v-model="page" :length="1"></v-pagination>
+        <v-pagination v-model="page" :length="pageCount"></v-pagination>
       </div>
     </template>
   </custom-card>
 </template>
 
 <script>
+import dateFormat from "../../tools/customDate";
+import BrandProduct from "../../classes/BrandProduct";
+import { customCopyObject } from "../../tools/customCopyObject";
+import { customHttpRequest } from "../../tools/customHttpRequest";
 export default {
+  filters: {
+    dateFormat: function(value) {
+      return dateFormat(value);
+    }
+  },
   data: () => ({
-    search: "",
-    dialog: false,
     page: 1,
     pageCount: 0,
     itemsPerPage: 10,
+    loadingButton: false,
+    validateError: false,
+    search: "",
+    dialog: false,
     headers: [
       {
         text: "Tipo",
@@ -123,21 +143,15 @@ export default {
         text: "Agregado",
         align: "left",
         sortable: true,
-        value: "createdDate"
+        value: "createdAt"
       },
       { text: "Estado", value: "status" },
       { text: "Acciones", value: "action", sortable: false }
     ],
     brands: [],
     editedIndex: -1,
-    editedItem: {
-      name: "",
-      status: 1
-    },
-    defaultItem: {
-      name: "",
-      status: 1
-    }
+    editedItem: BrandProduct,
+    defaultItem: customCopyObject(BrandProduct)
   }),
 
   computed: {
@@ -160,7 +174,14 @@ export default {
     initialize() {
       this.brands = this.$store.state.brands;
     },
-
+    validateForm() {
+      if (!this.editedItem.name) {
+        this.validateError = true;
+        return false;
+      }
+      this.validateError = false;
+      return true;
+    },
     editItem(item) {
       this.editedIndex = this.brands.indexOf(item);
       this.editedItem = Object.assign({}, item);
@@ -169,8 +190,11 @@ export default {
 
     deleteItem(item) {
       const index = this.brands.indexOf(item);
-      confirm("¿Seguro que deseas eliminar este elemento?") &&
+      let brandsId = this.brands[index]._id;
+      if (confirm("¿Seguro que deseas eliminar este elemento?")) {
+        customHttpRequest("delete", "/api/brands/delete/" + brandsId);
         this.brands.splice(index, 1);
+      }
     },
 
     close() {
@@ -182,12 +206,41 @@ export default {
     },
 
     save() {
+      if (!this.validateForm()) return false;
       if (this.editedIndex > -1) {
-        Object.assign(this.brands[this.editedIndex], this.editedItem);
+        let brandId = this.brands[this.editedIndex]._id;
+        //update brand
+        this.loadingButton = true;
+        customHttpRequest(
+          "put",
+          "/api/brands/update/" + brandId,
+          this.editedItem,
+          (err, callback) => {
+            if (err) {
+              return (this.loadingButton = false);
+            }
+            Object.assign(this.brands[this.editedIndex], this.editedItem);
+            this.loadingButton = false;
+            this.close();
+          }
+        );
       } else {
-        this.brands.push(this.editedItem);
+        //create brand
+        this.loadingButton = true;
+        customHttpRequest(
+          "post",
+          "/api/brands/create",
+          this.editedItem,
+          (err, callback) => {
+            if (err) {
+              return (this.loadingButton = false);
+            }
+            this.brands.push(callback);
+            this.loadingButton = false;
+            this.close();
+          }
+        );
       }
-      this.close();
     }
   }
 };

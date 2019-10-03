@@ -1,17 +1,17 @@
 <template>
-  <custom-card title="Realizar venta" icon="mdi-plus">
+  <custom-card title="Realizar compra" icon="mdi-plus">
     <template v-slot:content>
       <v-container>
-        <v-btn color="primary" @click="addOrder">
+        <v-btn color="primary" @click="addpurchase">
           <v-icon left>mdi-plus</v-icon>Agregar
         </v-btn>
         <v-alert
           class="my-5"
-          v-show="order.length==0"
-          type="success"
+          v-show="purchase.length==0"
+          color="error"
           text
-        >Agrega productos a esta venta</v-alert>
-        <v-alert text type="error" :value="validateError">Es necesario agregar al menos 01 producto</v-alert>
+        >Agrega productos a esta compra</v-alert>
+        <v-alert text type="error" :value="validateError">Es necesario agregar al menos 1 producto</v-alert>
         <v-simple-table>
           <template v-slot:default>
             <thead>
@@ -24,7 +24,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(product,orderIndex) in order" :key="product.productId">
+              <tr v-for="(product,purchaseIndex) in purchase" :key="product.productId">
                 <td>
                   <v-container>
                     <v-select
@@ -34,24 +34,24 @@
                       :items="products"
                       item-text="model"
                       item-value="_id"
-                      @change="order[orderIndex].price=getProductPrice(product.productId)"
+                      @change="purchase[purchaseIndex].purchasePrice=getProductPurchasePrice(product.productId)"
                     ></v-select>
                   </v-container>
                 </td>
                 <td>
                   <v-text-field v-model="product.qty" type="number"></v-text-field>
                 </td>
-                <td>S/.{{product.price}}</td>
-                <td>S/.{{product.price*product.qty}}</td>
+                <td>S/.{{product.purchasePrice}}</td>
+                <td>S/.{{product.purchasePrice*product.qty}}</td>
                 <td>
-                  <v-btn small color="error" @click="deleteOrder(orderIndex)">Eliminar</v-btn>
+                  <v-btn small color="error" @click="deletepurchase(purchaseIndex)">Eliminar</v-btn>
                 </td>
               </tr>
             </tbody>
           </template>
         </v-simple-table>
         <v-row justify="end" class="mr-3">
-          <v-card outlined color="light-green lighten-5" class="pa-3">
+          <v-card outlined color="red lighten-5" class="pa-3">
             <strong class="mr-3">Total:</strong>
             &nbsp;
             <span class="total">S/.{{getTotal}}</span>
@@ -59,7 +59,7 @@
         </v-row>
         <v-alert text type="error" :value="stockError">La cantidad vendida no puede superar el stock</v-alert>
 
-        <v-btn :loading="loadingButton" color="success" @click="saveOrder">Guardar orden</v-btn>
+        <v-btn :loading="loadingButton" color="success" @click="savepurchase">Guardar compra</v-btn>
       </v-container>
     </template>
   </custom-card>
@@ -72,7 +72,7 @@ import { customHttpRequest } from "../../tools/customHttpRequest";
 export default {
   data() {
     return {
-      order: [],
+      purchase: [],
       total: 0,
       loadingButton: false,
       validateError: false,
@@ -80,43 +80,31 @@ export default {
     };
   },
   methods: {
-    deleteOrder(orderIndex) {
-      this.order.splice(orderIndex, 1);
+    deletepurchase(purchaseIndex) {
+      this.purchase.splice(purchaseIndex, 1);
     },
-    addOrder() {
-      this.order.push({
+    addpurchase() {
+      this.purchase.push({
         productId: "",
         qty: 1,
-        price: 0
+        purchasePrice: 0
       });
     },
-    getProductPrice(model) {
-      return this.$store.getters.getProductPrice(model);
+    getProductPurchasePrice(model) {
+      return this.$store.getters.getProductPurchasePrice(model);
     },
     validateForm() {
-      let products = this.order;
+      let products = this.purchase;
       let stockSentinel = false;
-      let stockError = false;
-      products.forEach(product => {
-        let stock = this.$store.getters.getproductStock(product.productId);
-        if (product.qty > stock) {
-          return (stockSentinel = true);
-        }
-      });
-      if (stockSentinel === true) {
-        this.stockError = true;
-        return false;
-      }
-      if (this.order.length === 0) {
+      if (this.purchase.length === 0) {
         this.validateError = true;
         return false;
       }
       this.stockError = false;
       this.validateError = false;
-      stockSentinel = false;
       return true;
     },
-    async saveOrder() {
+    async savepurchase() {
       if (!this.validateForm()) return false;
       this.loadingButton = true;
       await this.apiCalls();
@@ -125,22 +113,24 @@ export default {
         color: "success"
       });
       this.loadingButton = false;
-      this.order = [];
+      this.purchase = [];
     },
     apiCalls() {
       return new Promise((resolve, reject) => {
         //creating sale
         axios
-          .post("/api/orders/create", { userId: this.$store.getters.getUserId })
+          .post("/api/purchases/create", {
+            userId: this.$store.getters.getUserId
+          })
           .then(res => {
             //creating sale details
-            let orderId = res.data.payload._id;
-            this.order.forEach(product => {
+            let purchaseId = res.data.payload._id;
+            this.purchase.forEach(product => {
               axios
-                .post("/api/order-details/create", {
-                  orderId: orderId,
+                .post("/api/purchase-details/create", {
+                  purchaseId: purchaseId,
                   productId: product.productId,
-                  price: product.price,
+                  purchasePrice: product.purchasePrice,
                   qty: parseInt(product.qty)
                 })
                 .then(res => {
@@ -164,8 +154,8 @@ export default {
       return this.$store.getters.getProducts;
     },
     getTotal() {
-      return this.order.reduce(
-        (a, b) => a + this.getProductPrice(b.productId) * b.qty,
+      return this.purchase.reduce(
+        (a, b) => a + this.getProductPurchasePrice(b.productId) * b.qty,
         0
       );
     }

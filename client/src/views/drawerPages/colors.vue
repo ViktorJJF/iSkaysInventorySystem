@@ -1,12 +1,12 @@
 <template>
-  <custom-card title="Tipo de productos" icon="mdi-format-list-bulleted">
+  <custom-card title="Colores de productos" icon="mdi-format-color-fill">
     <template v-slot:content>
       <v-data-table
         no-results-text="No se encontraron resultados"
         :search="search"
         hide-default-footer
         :headers="headers"
-        :items="types"
+        :items="colors"
         sort-by="calories"
         class="elevation-1"
         @page-count="pageCount = $event"
@@ -23,7 +23,7 @@
                   hide-details
                   v-model="search"
                   append-icon="search"
-                  placeholder="Escribe el nombre del tipo"
+                  placeholder="Escribe el nombre del color"
                   single-line
                   outlined
                 ></v-text-field>
@@ -31,7 +31,7 @@
               <v-divider class="mx-4" inset vertical></v-divider>
               <v-dialog v-model="dialog" max-width="500px">
                 <template v-slot:activator="{ on }">
-                  <v-btn color="secondary" dark class="mb-2" v-on="on">Agregar Tipo</v-btn>
+                  <v-btn color="secondary" dark class="mb-2" v-on="on">Agregar Color</v-btn>
                 </template>
                 <v-card>
                   <v-card-title>
@@ -43,7 +43,7 @@
                       text
                       type="error"
                       :value="validateError"
-                    >Es necesario colocar el nombre del tipo</v-alert>
+                    >Es necesario colocar el nombre del color</v-alert>
                     <v-row dense>
                       <v-col cols="12" sm="12" md="12">
                         <span class="font-weight-bold">Nombre</span>
@@ -54,17 +54,8 @@
                           class
                           outlined
                           v-model="editedItem.name"
-                          placeholder="Nombre del tipo de producto"
+                          placeholder="Nombre del color del producto"
                         ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="12">
-                        <span class="font-weight-bold">Descripción</span>
-                        <v-textarea
-                          hide-details
-                          placeholder="Ingresa una descripción"
-                          outlined
-                          v-model="editedItem.description"
-                        ></v-textarea>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
                         <span class="font-weight-bold">Estado</span>
@@ -89,8 +80,8 @@
               </v-dialog>
               <v-col cols="12" sm="12">
                 <p>
-                  <strong>Total de tipos:</strong>
-                  {{types.length}}
+                  <strong>Total de colores:</strong>
+                  {{colors.length}}
                 </p>
               </v-col>
             </v-row>
@@ -102,7 +93,7 @@
         </template>
         <template v-slot:item.createdAt="{ item }">{{item.createdAt | dateFormat}}</template>
         <template v-slot:no-data>
-          <v-alert type="error" :value="true">Aún no cuentas con tipos de productos</v-alert>
+          <v-alert type="error" :value="true">Aún no cuentas con colores de productos</v-alert>
         </template>
         <template v-slot:item.status="{item}">
           <v-chip v-if="item.status" color="success">Activo</v-chip>
@@ -118,7 +109,7 @@
 
 <script>
 import dateFormat from "../../tools/customDate";
-import TypeProduct from "../../classes/TypeProduct";
+import ColorProduct from "../../classes/ColorProduct";
 import { customCopyObject } from "../../tools/customCopyObject";
 import { customHttpRequest } from "../../tools/customHttpRequest";
 export default {
@@ -137,19 +128,11 @@ export default {
     dialog: false,
     headers: [
       {
-        text: "Tipo",
+        text: "Color",
         align: "left",
         sortable: false,
         value: "name",
         class: "header-styles"
-      },
-      {
-        text: "Descripción",
-        align: "left",
-        width: "40%",
-        sortable: false,
-        value: "description",
-        filterable: false
       },
       {
         text: "Agregado",
@@ -160,15 +143,15 @@ export default {
       { text: "Estado", value: "status" },
       { text: "Acciones", value: "action", sortable: false }
     ],
-    types: [],
+    colors: [],
     editedIndex: -1,
-    editedItem: TypeProduct,
-    defaultItem: customCopyObject(TypeProduct)
+    editedItem: ColorProduct,
+    defaultItem: customCopyObject(ColorProduct)
   }),
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Nuevo Tipo" : "Editar Tipo";
+      return this.editedIndex === -1 ? "Nuevo Color" : "Editar Color";
     }
   },
 
@@ -184,7 +167,7 @@ export default {
 
   methods: {
     initialize() {
-      this.types = this.$store.state.types;
+      this.colors = this.$store.state.colors;
     },
     validateForm() {
       if (!this.editedItem.name) {
@@ -195,17 +178,17 @@ export default {
       return true;
     },
     editItem(item) {
-      this.editedIndex = this.types.indexOf(item);
+      this.editedIndex = this.colors.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      const index = this.types.indexOf(item);
-      let typeId = this.types[index]._id;
+      const index = this.colors.indexOf(item);
+      let typeId = this.colors[index]._id;
       if (confirm("¿Seguro que deseas eliminar este elemento?")) {
-        customHttpRequest("delete", "/api/types/delete/" + typeId);
-        this.types.splice(index, 1);
+        customHttpRequest("delete", "/api/colors/delete/" + typeId);
+        this.colors.splice(index, 1);
       }
     },
 
@@ -220,18 +203,18 @@ export default {
     save() {
       if (!this.validateForm()) return false;
       if (this.editedIndex > -1) {
-        let typeId = this.types[this.editedIndex]._id;
+        let typeId = this.colors[this.editedIndex]._id;
         //update type
         this.loadingButton = true;
         customHttpRequest(
           "put",
-          "/api/types/update/" + typeId,
+          "/api/colors/update/" + typeId,
           this.editedItem,
           (err, callback) => {
             if (err) {
               return (this.loadingButton = false);
             }
-            Object.assign(this.types[this.editedIndex], this.editedItem);
+            Object.assign(this.colors[this.editedIndex], this.editedItem);
             this.loadingButton = false;
             this.close();
           }
@@ -241,13 +224,13 @@ export default {
         this.loadingButton = true;
         customHttpRequest(
           "post",
-          "/api/types/create",
+          "/api/colors/create",
           this.editedItem,
           (err, callback) => {
             if (err) {
               return (this.loadingButton = false);
             }
-            this.types.push(callback);
+            this.colors.push(callback);
             this.loadingButton = false;
             this.close();
           }

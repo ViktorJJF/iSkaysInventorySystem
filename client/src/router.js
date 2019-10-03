@@ -41,21 +41,37 @@ let routes = [{
         name: 'type',
         component: require('./views/drawerPages/types.vue').default
     }, {
+        path: '/colores',
+        name: 'colors',
+        component: require('./views/drawerPages/colors.vue').default
+    }, {
         path: '/productos/crear',
         name: 'addProduct',
         component: require('./views/drawerPages/addProduct.vue').default
     }, {
         path: '/productos/listado',
         name: 'listProduct',
-        component: require('./views/drawerPages/listProducts.vue').default
+        component: require('./views/drawerPages/inventory.vue').default
     }, {
-        path: '/ordenes/crear',
+        path: '/ventas/crear',
         name: 'addOrder',
         component: require('./views/drawerPages/addOrder.vue').default
     }, {
-        path: '/ordenes/historial',
+        path: '/ventas/historial',
         name: 'orderHistory',
         component: require('./views/drawerPages/orderHistory.vue').default
+    }, {
+        path: '/perfil-usuario',
+        name: 'userProfile',
+        component: require('./views/drawerPages/userProfile.vue').default
+    }, {
+        path: '/compras/crear',
+        name: 'addPurchase',
+        component: require('./views/drawerPages/addPurchase.vue').default
+    }, {
+        path: '/compras/historial',
+        name: 'historyPurchase',
+        component: require('./views/drawerPages/historyPurchase.vue').default
     }]
 }];
 

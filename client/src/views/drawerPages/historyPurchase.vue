@@ -1,24 +1,22 @@
 <template>
-  <custom-card title="Historial de ventas" icon="mdi-format-list-checks">
+  <custom-card title="Historial de compras" icon="mdi-format-list-checks">
     <template v-slot:content>
       <v-col cols="12" sm="12">
         <p>
-          <strong>Total de ventas:</strong>
-          {{$store.getters.getTotalOrders}}
+          <strong>Total de compras:</strong>
+          {{$store.getters.getTotalPurchases}}
         </p>
       </v-col>
       <v-data-table
         hide-default-footer
         :headers="headers"
-        :items="orders"
+        :items="purchases"
         sort-by="calories"
         class="elevation-1"
         @page-count="pageCount = $event"
-        :page.sync="page"
-        :items-per-page="itemsPerPage"
       >
         <template v-slot:no-data>
-          <v-alert type="error" :value="true">Aún no cuentas con un historial de ventas</v-alert>
+          <v-alert type="error" :value="true">Aún no cuentas con un historial de compras</v-alert>
         </template>
         <template v-slot:item.actions="{item}">
           <v-btn
@@ -32,47 +30,47 @@
         <template v-slot:item.createdAt="{ item }">{{item.createdAt | dateFormat}}</template>
       </v-data-table>
       <div class="text-center pt-2">
-        <v-pagination v-model="page" :length="pageCount"></v-pagination>
+        <v-pagination v-model="page" :length="1"></v-pagination>
       </div>
       <v-dialog v-model="dialog" width="500">
         <v-card v-if="isDataReady">
           <v-toolbar color="secondary" dark>
-            <v-toolbar-title>Detalle de venta</v-toolbar-title>
+            <v-toolbar-title>Detalle de compra</v-toolbar-title>
           </v-toolbar>
           <v-container>
             <p>
-              <strong>ID de la venta:</strong>
-              {{orders[selectedOrder]._id}}
+              <strong>ID de la compra:</strong>
+              {{purchases[selectedOrder]._id}}
             </p>
             <p>
               <strong>Usuario:</strong>
-              {{orders[selectedOrder].userId}}
+              {{purchases[selectedOrder].userId}}
             </p>
             <p>
-              <strong>Detalle de productos:</strong>
+              <strong>Detalle de productos comprados:</strong>
             </p>
             <v-simple-table>
               <template v-slot:default>
                 <thead>
                   <tr>
                     <th class="text-left">Producto</th>
-                    <th class="text-left">Precio</th>
+                    <th class="text-left">Precio de compra</th>
                     <th class="text-left">Cantidad</th>
                     <th class="text-left">Subtotal</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="orderDetail in orderDetails" :key="orderDetail._id">
-                    <td>{{ $store.getters.getProductById(orderDetail.productId) }}</td>
-                    <td>S/. {{ orderDetail.price }}</td>
-                    <td>{{ orderDetail.qty }}</td>
-                    <td>S/. {{ orderDetail.price*orderDetail.qty }}</td>
+                  <tr v-for="purchaseDetail in purchaseDetails" :key="purchaseDetail._id">
+                    <td>{{ $store.getters.getProductById(purchaseDetail.productId) }}</td>
+                    <td>S/. {{ purchaseDetail.purchasePrice }}</td>
+                    <td>{{ purchaseDetail.qty }}</td>
+                    <td>S/. {{ purchaseDetail.purchasePrice*purchaseDetail.qty }}</td>
                   </tr>
                 </tbody>
               </template>
             </v-simple-table>
             <v-row justify="end" class="mr-3">
-              <v-card outlined color="light-green lighten-5" class="pa-3">
+              <v-card outlined color="red lighten-5" class="pa-3">
                 <strong class="mr-3">Total:</strong>
                 &nbsp;
                 <span class="total">S/.{{getTotal}}</span>
@@ -82,7 +80,7 @@
           <v-divider></v-divider>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="dialog = false;clearOrderDetail();">De acuerdo</v-btn>
+            <v-btn color="primary" text @click="dialog = false;clearPurchaseDetails();">De acuerdo</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -101,21 +99,21 @@ export default {
     }
   },
   data: () => ({
-    page: 1,
-    pageCount: 0,
-    itemsPerPage: 10,
     isDataReady: false,
     selectedOrder: 0,
     search: "",
     dialog: false,
+    page: 1,
+    pageCount: 0,
+    itemsPerPage: 10,
     headers: [
-      { text: "ID de venta", value: "_id" },
+      { text: "ID de compra", value: "_id" },
       { text: "Usuario", value: "userId" },
       { text: "Fecha", value: "createdAt" },
       { text: "Acciones", value: "actions" }
     ],
-    orders: [],
-    orderDetails: []
+    purchases: [],
+    purchaseDetails: []
   }),
   computed: {
     formTitle() {
@@ -131,7 +129,10 @@ export default {
       return this.$store.getters.getColors;
     },
     getTotal() {
-      return this.orderDetails.reduce((a, b) => a + b.price * b.qty, 0);
+      return this.purchaseDetails.reduce(
+        (a, b) => a + b.purchasePrice * b.qty,
+        0
+      );
     }
   },
   created() {
@@ -140,43 +141,43 @@ export default {
 
   methods: {
     async initialData() {
-      let orders = this.$store.getters.getOrders;
-      if (orders.length > 0) {
-        this.orders = customCopyObject(orders);
+      let purchases = this.$store.getters.getPurchases;
+      if (purchases.length > 0) {
+        this.purchases = customCopyObject(purchases);
       } else {
-        this.orders = await this.$store.dispatch("loadInitialOrders");
+        this.purchases = await this.$store.dispatch("loadInitialPurchases");
       }
       this.isDataReady = true;
     },
     showOrderDetail(item) {
-      this.selectedOrder = this.orders.indexOf(item);
-      console.log("se selecciono: ", this.orders[this.selectedOrder]);
-      let orderId = this.orders[this.selectedOrder]._id;
+      this.selectedOrder = this.purchases.indexOf(item);
+      console.log("se selecciono: ", this.purchases[this.selectedOrder]);
+      let purchaseId = this.purchases[this.selectedOrder]._id;
       axios
-        .get("/api/order-details/list", { params: { orderId } })
+        .get("/api/purchase-details/list", { params: { purchaseId } })
         .then(res => {
           console.log(res);
           if (res.data.ok) {
-            this.orderDetails = res.data.payload;
+            this.purchaseDetails = res.data.payload;
           }
         })
         .catch(err => {
           console.error(err);
         });
     },
-    clearOrderDetail() {
-      this.orderDetails = [];
+    clearPurchaseDetails() {
+      this.purchaseDetails = [];
     },
     deleteItem(item) {
-      const index = this.orders.indexOf(item);
-      let orderId = this.orders[index]._id;
+      const index = this.purchases.indexOf(item);
+      let purchaseId = this.purchases[index]._id;
       if (
         confirm(
-          "¿Seguro que deseas eliminar esta venta? Se sumará el stock a los productos del detalle"
+          "¿Seguro que deseas eliminar esta compra? Se sumará el stock a los productos del detalle"
         )
       ) {
-        customHttpRequest("delete", "/api/orders/delete/" + orderId);
-        this.orders.splice(index, 1);
+        customHttpRequest("delete", "/api/purchases/delete/" + purchaseId);
+        this.purchases.splice(index, 1);
       }
     }
   }
