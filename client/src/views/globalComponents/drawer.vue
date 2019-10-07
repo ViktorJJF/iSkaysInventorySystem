@@ -4,15 +4,15 @@
       <v-list-item>
         <v-img aspect-ratio="1.7" contain src="/images/fulltec.jpeg"></v-img>
       </v-list-item>
-      <v-list-item link :to="{name:'userProfile'}">
+      <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="title">{{user}}</v-list-item-title>
           <v-list-item-subtitle>{{email}}</v-list-item-subtitle>
         </v-list-item-content>
 
-        <v-list-item-action>
+        <!-- <v-list-item-action>
           <v-icon>mdi-menu-down</v-icon>
-        </v-list-item-action>
+        </v-list-item-action>-->
       </v-list-item>
     </v-list>
     <v-divider class="mx-3 mb-3"></v-divider>
