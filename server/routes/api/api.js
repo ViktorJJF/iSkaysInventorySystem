@@ -56,5 +56,5 @@ router.get('/purchase-details/list', purchaseDetailsController.list);
 router.post('/purchase-details/create', purchaseDetailsController.create);
 router.put('/purchase-details/update/:id', purchaseDetailsController.update);
 router.delete('/purchase-details/delete/:id', purchaseDetailsController.deletes);
-
+//CRUD USERS
 module.exports = router;
