@@ -13,8 +13,6 @@
         hide-default-footer
         :headers="headers"
         :items="purchases"
-        sort-by="calories"
-        class="elevation-1"
         @page-count="pageCount = $event"
       >
         <template v-slot:no-data>
@@ -30,6 +28,7 @@
           <v-btn small color="error" @click="deleteItem(item)">Eliminar</v-btn>
         </template>
         <template v-slot:item.createdAt="{ item }">{{item.createdAt | dateFormat}}</template>
+        <template v-slot:item.userId>Administrador</template>
       </v-data-table>
       <div class="text-center pt-2">
         <v-pagination v-model="page" :length="1"></v-pagination>

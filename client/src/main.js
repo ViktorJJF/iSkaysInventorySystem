@@ -12,8 +12,15 @@ import './views/globalComponents/globalComponents';
 // global axios
 import './bootstrap';
 
+// styles
+import './styles/styles.scss';
+
 //vee validate
 import "./plugins/vee-validate";
+
+//vue chartist
+import 'chartist/dist/chartist.min.css'
+Vue.use(require('vue-chartist'));
 
 
 Vue.config.productionTip = false

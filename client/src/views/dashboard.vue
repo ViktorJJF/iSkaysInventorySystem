@@ -16,6 +16,9 @@
 
 <script>
 export default {
+  data() {
+    return {};
+  },
   props: {
     source: String
   },
@@ -60,7 +63,4 @@ export default {
 </script>
 
 <style>
-#keep .v-navigation-drawer__border {
-  display: none;
-}
 </style>

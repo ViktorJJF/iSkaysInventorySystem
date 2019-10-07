@@ -6,3 +6,5 @@
     </v-app>
   </div>
 </template>
+<style scoped>
+</style>

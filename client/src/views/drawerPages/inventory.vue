@@ -25,8 +25,6 @@
                 hide-default-footer
                 :headers="headers"
                 :items="filteredProducts"
-                sort-by="calories"
-                class="elevation-1"
                 @page-count="pageCount = $event"
                 :page.sync="page"
                 :items-per-page="itemsPerPage"

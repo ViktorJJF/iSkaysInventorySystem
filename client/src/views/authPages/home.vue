@@ -1,6 +1,5 @@
 <template>
   <div>
-    <toolbar></toolbar>
     <v-content>
       <router-view></router-view>
     </v-content>

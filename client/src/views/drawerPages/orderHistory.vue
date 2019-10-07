@@ -13,8 +13,6 @@
         hide-default-footer
         :headers="headers"
         :items="orders"
-        sort-by="calories"
-        class="elevation-1"
         @page-count="pageCount = $event"
         :page.sync="page"
         :items-per-page="itemsPerPage"
@@ -22,6 +20,7 @@
         <template v-slot:no-data>
           <v-alert type="error" :value="true">Aún no cuentas con un historial de ventas</v-alert>
         </template>
+        <template v-slot:item.userId>Administrador</template>
         <template v-slot:item.actions="{item}">
           <v-btn
             small

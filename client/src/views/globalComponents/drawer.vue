@@ -1,29 +1,29 @@
 <template>
-  <v-navigation-drawer dark v-model="drawer" app>
+  <v-navigation-drawer color="#040505" dark v-model="drawer" app width="260">
     <v-list>
       <v-list-item>
         <v-img aspect-ratio="1.7" contain src="/images/fulltec.jpeg"></v-img>
       </v-list-item>
-      <v-list-item link>
+      <v-list-item link :to="{name:'userProfile'}">
         <v-list-item-content>
           <v-list-item-title class="title">{{user}}</v-list-item-title>
           <v-list-item-subtitle>{{email}}</v-list-item-subtitle>
         </v-list-item-content>
 
-        <!-- <v-list-item-action>
+        <v-list-item-action>
           <v-icon>mdi-menu-down</v-icon>
-        </v-list-item-action>-->
+        </v-list-item-action>
       </v-list-item>
     </v-list>
-    <v-divider></v-divider>
-    <v-list rounded>
+    <v-divider class="mx-3 mb-3"></v-divider>
+    <v-list nav flat>
       <template v-for="(item, i) in items">
-        <v-list-item :key="i" @click :to="{name:item.to}">
+        <v-list-item active-class="primary" :key="i" :to="{name:item.to}">
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title>{{ item.text }}</v-list-item-title>
+            <v-list-item-title v-text="item.text" />
           </v-list-item-content>
         </v-list-item>
       </template>
