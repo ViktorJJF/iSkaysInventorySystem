@@ -49,7 +49,7 @@ export default {
       }
     },
     user() {
-      return this.$store.state.user.firstName;
+      return this.$store.state.user.email;
     }
   },
   methods: {

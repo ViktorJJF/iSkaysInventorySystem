@@ -4,6 +4,11 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
+const session = require('express-session'); //session managment
+const MongoStore = require('connect-mongo')(session);
+const passport = require('passport');
+const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose');
 
 //Middleware
 
@@ -13,17 +18,50 @@ app.use(bodyParser.urlencoded({
 }))
 
 // parse application/json
-app.use(bodyParser.json())
-app.use(cors());
+app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(cors({
+    credentials: true
+}));
 
-const mongoose = require('mongoose');
-
+//session managment
+//initializing session
+// app.use(session({
+//     secret: 'ijegoierjgoiemrjgoiem',
+//     resave: false,
+//     saveUninitialized: false,
+//     // cookie: { secure: true }
+// }))
 mongoose.connect(config.dbString, {
     useNewUrlParser: true
 }, (err, res) => {
     if (err) throw err;
     console.log('DB online ONLINE');
 });
+
+app.use(session({
+    secret: 'ijegoierjgoiemrjgoiem',
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection
+    }),
+    resave: false,
+    saveUninitialized: true,
+    vcookie: {
+        httpOnly: true,
+        maxAge: 2419200000
+    } // configure when sessions expires
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function (user_id, done) {
+    done(null, user_id);
+});
+
+passport.deserializeUser(function (user_id, done) {
+    done(null, user_id);
+});
+
 
 const routes = require('./routes/api/api.js');
 app.use('/api', routes);

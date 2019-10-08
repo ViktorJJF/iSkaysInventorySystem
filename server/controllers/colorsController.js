@@ -1,5 +1,14 @@
 const Color = require('../models/Colors.js');
-const dateTools = require("../tools/dateTools.js")
+//real time pusher
+const Pusher = require('pusher');
+var pusher = new Pusher({
+    appId: '876313',
+    key: 'cc4e375af7e721dc4468',
+    secret: '0cf84638c4d6a7dcc093',
+    cluster: 'us2',
+    encrypted: true
+});
+
 const list = (req, res) => {
     Color.find().exec((err, payload) => {
         if (err) {
@@ -38,6 +47,11 @@ const create = (req, res) => {
                 err
             });
         }
+        //realtime
+        pusher.trigger('colors', 'color_added', {
+            color: payload
+        });
+
         res.json({
             ok: true,
             message: "Color de producto creado con éxito",

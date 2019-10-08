@@ -120,6 +120,7 @@ import dateFormat from "../../tools/customDate";
 import ColorProduct from "../../classes/ColorProduct";
 import { customCopyObject } from "../../tools/customCopyObject";
 import { customHttpRequest } from "../../tools/customHttpRequest";
+import Pusher from "pusher-js"; // import Pusher
 export default {
   filters: {
     dateFormat: function(value) {
@@ -171,9 +172,19 @@ export default {
 
   created() {
     this.initialize();
+    this.subscribe();
   },
 
   methods: {
+    subscribe() {
+      let pusher = new Pusher("cc4e375af7e721dc4468", {
+        cluster: "us2"
+      });
+      pusher.subscribe("colors");
+      pusher.bind("color_added", data => {
+        this.colors.push(data.color);
+      });
+    },
     initialize() {
       this.colors = this.$store.state.colors;
     },
@@ -238,7 +249,7 @@ export default {
             if (err) {
               return (this.loadingButton = false);
             }
-            this.colors.push(callback);
+            // this.colors.push(callback);
             this.loadingButton = false;
             this.close();
           }

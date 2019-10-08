@@ -11,29 +11,33 @@
         </div>
 
         <!-- Login Form -->
-        <v-form>
-          <v-text-field
-            outlined
-            id="login"
-            class="fadeIn second mx-9"
-            name="login"
-            v-model="user.email"
-            label="Correo"
-            prepend-inner-icon="person"
-            type="text"
-          ></v-text-field>
-          <v-text-field
-            outlined
-            id="password"
-            name="login"
-            class="fadeIn third mx-9"
-            label="Contraseña"
-            prepend-inner-icon="lock"
-            type="password"
-            v-model="user.password"
-          ></v-text-field>
-          <input type="submit" class="fadeIn fourth" value="Ingresar" @click="login(user)" />
-        </v-form>
+        <v-text-field
+          outlined
+          id="login"
+          class="fadeIn second mx-9"
+          name="login"
+          v-model="user.email"
+          label="Correo"
+          prepend-inner-icon="person"
+          type="text"
+        ></v-text-field>
+        <v-text-field
+          outlined
+          id="password"
+          name="login"
+          class="fadeIn third mx-9"
+          label="Contraseña"
+          prepend-inner-icon="lock"
+          type="password"
+          v-model="user.password"
+        ></v-text-field>
+        <v-btn
+          class="ma-5"
+          color="info"
+          lass="fadeIn fourth"
+          value="Ingresar"
+          @click="login(user)"
+        >Ingresar</v-btn>
       </div>
     </div>
   </div>
@@ -59,7 +63,7 @@ export default {
         })
         .catch(err => {
           this.$store.dispatch("showSnackbar", {
-            text: "Usuario o contraseña incorrectos",
+            text: err.response.data,
             color: "error"
           });
         });
@@ -150,9 +154,7 @@ h2.active {
 
 /* FORM TYPOGRAPHY*/
 
-input[type="button"],
-input[type="submit"],
-input[type="reset"] {
+.submitButton {
   background-color: #56baed;
   border: none;
   color: white;

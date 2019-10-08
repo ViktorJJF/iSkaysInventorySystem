@@ -289,6 +289,7 @@ export default new Vuex.Store({
     }) {
       commit("logout");
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
       // delete axios.defaults.headers.common['Authorization'];
     },
     showSnackbar({
@@ -316,61 +317,44 @@ export default new Vuex.Store({
       commit
     }, user) {
       return new Promise((resolve, reject) => {
-        if (user.email.toLowerCase() != "admin@gmail.com" || user.password != "123456") {
-          reject("Usuario o contraseña incorrectos");
-        } else {
-          let user = {
-            _id: "5d9670e8d2519c2bb88d829f",
-            firstName: "Administrador",
-            lastName: "Fulltec",
-            email: "admin@gmail.com",
-            role: 1
-          };
-          let token = "fsajfiusjdfuisdiufhsuaf";
-          commit("auth_success", {
-            token,
-            user
+        commit('auth_request');
+        axios
+          .post("/api/login", {
+            email: user.email,
+            password: user.password
+          })
+          .then(res => {
+            if (res.data.ok) {
+              console.log(res.data);
+              const token = res.data.token;
+              const user = res.data.user;
+              localStorage.clear();
+              localStorage.setItem("token", token);
+              localStorage.setItem("user", JSON.stringify(user));
+              axios.defaults.headers.common['Authorization'] = token
+              commit('auth_success', {
+                token,
+                user
+              });
+              resolve(res.data.message);
+            }
+          })
+          .catch(err => {
+            commit('auth_error');
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            if (err.response) {
+              console.error(err.response.data);
+              reject(err);
+            }
           });
-          localStorage.setItem("token", token);
-          localStorage.setItem("user", JSON.stringify(user));
-          resolve("Bienvenido");
-        }
-
-        // commit('auth_request');
-        // axios
-        //     .post("/api/login", {
-        //         email: user.email,
-        //         password: user.password
-        //     })
-        //     .then(res => {
-        //         if (res.data.ok) {
-        //             console.log(res.data);
-        //             const token = res.data.token;
-        //             const user = res.data.payload;
-        //             localStorage.clear();
-        //             localStorage.setItem("token", token);
-        //             localStorage.setItem("user", JSON.stringify(user));
-        //             axios.defaults.headers.common['Authorization'] = token
-        //             commit('auth_success', {
-        //                 token,
-        //                 user
-        //             });
-        //             resolve(res.data.message);
-        //         }
-        //     })
-        //     .catch(err => {
-        //         commit('auth_error');
-        //         localStorage.removeItem('token');
-        //         localStorage.removeItem('user');
-        //         if (err.response) {
-        //             console.error(err.response.data);
-        //             reject(err);
-        //         }
-        //     });
       });
     }
   },
   getters: {
+    getFullNameUser: state => {
+      return state.user.first_name + " " + state.user.last_name;
+    },
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,
     getBrands: state => {

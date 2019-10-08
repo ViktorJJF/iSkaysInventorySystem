@@ -40,6 +40,7 @@
           </v-list-item-content>
         </template>
         <v-list-item
+          active-class="primary"
           :to="{name:subItem.to}"
           v-for="subItem in item.items"
           :key="subItem.title"
@@ -123,7 +124,7 @@ export default {
       }
     },
     user() {
-      return this.$store.state.user.firstName;
+      return this.$store.getters.getFullNameUser;
     },
     email() {
       return this.$store.state.user.email;

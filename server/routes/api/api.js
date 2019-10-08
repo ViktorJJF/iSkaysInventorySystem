@@ -2,16 +2,28 @@ const express = require('express');
 const router = express.Router();
 
 //Controllers
-const typesController = require('../../controllers/typesController')
-const brandsController = require('../../controllers/brandsController')
-const colorsController = require('../../controllers/colorsController')
-const productsController = require('../../controllers/productsController')
-const ordersController = require('../../controllers/ordersController')
-const orderDetailsController = require('../../controllers/orderDetailsController')
-const purchasesController = require('../../controllers/purchasesController.js')
-const purchaseDetailsController = require('../../controllers/purchaseDetailsController.js')
+const typesController = require('../../controllers/typesController');
+const brandsController = require('../../controllers/brandsController');
+const colorsController = require('../../controllers/colorsController');
+const productsController = require('../../controllers/productsController');
+const ordersController = require('../../controllers/ordersController');
+const orderDetailsController = require('../../controllers/orderDetailsController');
+const purchasesController = require('../../controllers/purchasesController.js');
+const purchaseDetailsController = require('../../controllers/purchaseDetailsController.js');
+const usersController = require('../../controllers/usersController.js');
+
 //tools
 const dateTools = require("../../tools/dateTools.js")
+
+//sessions
+router.get('/session', (req, res) => {
+    console.log("sesion: ", req.cookies);
+    console.log("sesion usuario: ", req.user);
+    console.log("sesion: ", req.isAuthenticated());
+    res.json({
+        gaa: 'gaea'
+    });
+});
 
 //CRUD types
 router.get('/types/list', typesController.list);
@@ -57,4 +69,9 @@ router.post('/purchase-details/create', purchaseDetailsController.create);
 router.put('/purchase-details/update/:id', purchaseDetailsController.update);
 router.delete('/purchase-details/delete/:id', purchaseDetailsController.deletes);
 //CRUD USERS
+router.get('/users/list', usersController.list);
+router.post('/users/create', usersController.create);
+router.put('/users/update/:id', usersController.update);
+router.delete('/users/delete/:id', usersController.deletes);
+router.post('/login', usersController.login);
 module.exports = router;
