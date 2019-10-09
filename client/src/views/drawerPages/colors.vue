@@ -120,7 +120,7 @@ import dateFormat from "../../tools/customDate";
 import ColorProduct from "../../classes/ColorProduct";
 import { customCopyObject } from "../../tools/customCopyObject";
 import { customHttpRequest } from "../../tools/customHttpRequest";
-import Pusher from "pusher-js"; // import Pusher
+
 export default {
   filters: {
     dateFormat: function(value) {
@@ -154,8 +154,9 @@ export default {
     ],
     colors: [],
     editedIndex: -1,
-    editedItem: ColorProduct,
-    defaultItem: customCopyObject(ColorProduct)
+    editedItem: customCopyObject(ColorProduct),
+    defaultItem: customCopyObject(ColorProduct),
+    pusher: null
   }),
 
   computed: {
@@ -170,18 +171,25 @@ export default {
     }
   },
 
-  created() {
+  mounted() {
+    console.log("creando nuevo canal");
     this.initialize();
     this.subscribe();
   },
 
   methods: {
     subscribe() {
-      let pusher = new Pusher("cc4e375af7e721dc4468", {
-        cluster: "us2"
-      });
-      pusher.subscribe("colors");
-      pusher.bind("color_added", data => {
+      // this.pusher = new Pusher("cc4e375af7e721dc4468", {
+      //   cluster: "us2"
+      // });
+      // this.pusher.subscribe("colors");
+      // this.pusher.bind("color_added", data => {
+      //   console.log("se agregara el color:", data.color);
+      //   this.colors.push(data.color);
+      // });
+      console.log("se subscribira");
+      var channel = this.$pusher.subscribe("colors");
+      channel.bind("color_added", data => {
         this.colors.push(data.color);
       });
     },
@@ -251,6 +259,7 @@ export default {
             }
             // this.colors.push(callback);
             this.loadingButton = false;
+            console.log("cerrando pantalla de color");
             this.close();
           }
         );

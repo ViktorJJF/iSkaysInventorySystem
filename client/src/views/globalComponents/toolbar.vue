@@ -3,7 +3,7 @@
     <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
     <span class="title ml-3 mr-5">Fulltec</span>
     <v-spacer></v-spacer>
-    <v-menu v-if="$store.state.token" offset-y>
+    <v-menu v-if="$store.state.user" offset-y>
       <template v-slot:activator="{ on }">
         <v-btn icon v-on="on">
           <v-badge color="red" @click>
@@ -20,8 +20,8 @@
         </v-list-item>
       </v-list>
     </v-menu>
-    <v-btn v-if="!$store.state.token" dark outlined :to="{name:'login'}">Iniciar Sesión</v-btn>
-    <v-menu v-if="$store.state.token" offset-y>
+    <v-btn v-if="!$store.state.user" dark outlined :to="{name:'login'}">Iniciar Sesión</v-btn>
+    <v-menu v-if="$store.state.user" offset-y>
       <template v-slot:activator="{ on }">
         <v-btn text color="white" dark v-on="on">
           {{user}}
@@ -54,8 +54,15 @@ export default {
   },
   methods: {
     logout() {
-      this.$store.dispatch("logout");
-      this.$router.push({ name: "login" });
+      this.$store
+        .dispatch("logout")
+        .then(res => {
+          console.log("se pusheara el login");
+          this.$router.push({ name: "login" });
+        })
+        .catch(err => {
+          console.log("algo salio mal en logout");
+        });
     }
   }
 };

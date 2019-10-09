@@ -74,4 +74,6 @@ router.post('/users/create', usersController.create);
 router.put('/users/update/:id', usersController.update);
 router.delete('/users/delete/:id', usersController.deletes);
 router.post('/login', usersController.login);
+router.post('/users/logged', usersController.getUser);
+router.get('/logout', usersController.logout);
 module.exports = router;

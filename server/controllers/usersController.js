@@ -3,7 +3,27 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const config = require('../config.js');
 
-
+const logout = (req, res) => {
+    req.logout();
+    res.json({
+        ok: true
+    });
+}
+const getUser = (req, res) => {
+    if (req.isAuthenticated()) {
+        console.log("el usuario esta autenticado");
+        return res.json({
+            ok: true,
+            payload: req.user
+        });
+    }
+    return res.json({
+        ok: false,
+        err: {
+            message: "Usuario no logeado"
+        }
+    })
+}
 const list = (req, res) => {
     User.find({
         status: true
@@ -157,7 +177,7 @@ const login = (req, res) => {
         });
         console.log("antes del inicio: ", userDB._id);
         req.login({
-            userId: userDB._id
+            user: userDB
         }, (err) => {
             if (err) {
                 return console.log(err);
@@ -179,5 +199,7 @@ module.exports = {
     create,
     update,
     deletes,
-    login
+    login,
+    getUser,
+    logout
 }

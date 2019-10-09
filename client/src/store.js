@@ -9,7 +9,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     token: localStorage.getItem("token") || "",
-    user: JSON.parse(localStorage.getItem("user")) || {},
+    user: null,
     users: [],
     snackbar: {
       text: "",
@@ -40,6 +40,8 @@ export default new Vuex.Store({
       state.status = "";
       state.token = "";
       state.loggingIn = false;
+      state.user = null;
+      console.log("se borraran los datos");
     },
     auth_success(state, {
       token,
@@ -287,9 +289,18 @@ export default new Vuex.Store({
     logout({
       commit
     }) {
-      commit("logout");
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      return new Promise((resolve, reject) => {
+        axios.get('/api/logout')
+          .then(res => {
+            console.log("cerrando sesion");
+            commit("logout");
+            resolve();
+          })
+          .catch(err => {
+            console.error(err);
+            reject(err);
+          })
+      });
       // delete axios.defaults.headers.common['Authorization'];
     },
     showSnackbar({
@@ -325,12 +336,8 @@ export default new Vuex.Store({
           })
           .then(res => {
             if (res.data.ok) {
-              console.log(res.data);
               const token = res.data.token;
               const user = res.data.user;
-              localStorage.clear();
-              localStorage.setItem("token", token);
-              localStorage.setItem("user", JSON.stringify(user));
               axios.defaults.headers.common['Authorization'] = token
               commit('auth_success', {
                 token,
@@ -341,8 +348,6 @@ export default new Vuex.Store({
           })
           .catch(err => {
             commit('auth_error');
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
             if (err.response) {
               console.error(err.response.data);
               reject(err);
@@ -353,7 +358,9 @@ export default new Vuex.Store({
   },
   getters: {
     getFullNameUser: state => {
-      return state.user.first_name + " " + state.user.last_name;
+      if (state.user) {
+        return state.user.first_name + " " + state.user.last_name;
+      }
     },
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,

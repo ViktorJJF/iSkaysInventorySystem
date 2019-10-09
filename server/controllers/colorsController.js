@@ -48,6 +48,7 @@ const create = (req, res) => {
             });
         }
         //realtime
+        console.log("se pusheara un nuevo color");
         pusher.trigger('colors', 'color_added', {
             color: payload
         });

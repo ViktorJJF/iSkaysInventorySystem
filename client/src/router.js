@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
+import store from './store'
+import {
+    isLogged
+} from "./tools/isLogged";
 
 Vue.use(Router);
 
@@ -80,9 +83,16 @@ const router = new Router({
     mode: 'history'
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+    if (!store.state.user) {
+        let loginStatus = await isLogged();
+        if (loginStatus) {
+            store.state.user = loginStatus.user;
+        }
+    }
+
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (localStorage.getItem('token') == null) {
+        if (!store.state.user) {
             next({
                 name: 'login',
                 params: {
@@ -90,10 +100,10 @@ router.beforeEach((to, from, next) => {
                 }
             })
         } else {
-            let user = JSON.parse(localStorage.getItem('user'))
+            let user = store.state.user;
             if (to.matched.some(record => record.meta.requiresAuth)) {
                 if (user.role == "ADMIN") {
-                    next()
+                    next();
                 } else {
                     next({
                         name: 'dashboard'
@@ -104,7 +114,7 @@ router.beforeEach((to, from, next) => {
             }
         }
     } else if (to.matched.some(record => record.meta.guest)) {
-        if (localStorage.getItem('token') == null) {
+        if (store.state.user == null) {
             next()
         } else {
             next({

@@ -34,6 +34,14 @@ import './plugins/formattedDate'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
+Vue.use(require('vue-pusher'), {
+    api_key: 'cc4e375af7e721dc4468',
+    options: {
+        cluster: 'us2',
+        encrypted: true,
+    }
+});
+
 new Vue({
     vuetify,
     router,
