@@ -8,6 +8,9 @@
         <v-btn color="primary" :to="{name:'historyPurchase'}">
           <v-icon left>mdi-magnify</v-icon>Ver historial
         </v-btn>
+        <v-btn color="primary" @click="addpurchase" class="mr-3 my-3">
+          <v-icon left>mdi-plus</v-icon>Agregar Boleta
+        </v-btn>
         <v-alert
           class="my-5"
           v-show="purchase.length==0"
@@ -15,12 +18,16 @@
           text
         >Agrega productos a esta compra</v-alert>
         <v-alert text type="error" :value="validateError">Es necesario agregar al menos 1 producto</v-alert>
+        <v-text-field name="name" label id="id" outlined></v-text-field>
         <v-simple-table>
           <template v-slot:default>
             <thead>
               <tr>
                 <th class="text-left">Producto</th>
                 <th class="text-left">Cantidad</th>
+                <th class="text-left">Tipo</th>
+                <th class="text-left">Marca</th>
+                <th class="text-left">Modelo</th>
                 <th class="text-left">Precio</th>
                 <th class="text-left">Subtotal</th>
                 <th class="text-left">Eliminar producto</th>
@@ -64,6 +71,9 @@
 
         <v-btn :loading="loadingButton" color="success" @click="savepurchase">Guardar compra</v-btn>
       </v-container>
+      <v-container fluid>
+        <inventory></inventory>
+      </v-container>
     </template>
   </custom-card>
 </template>
@@ -72,9 +82,14 @@
 import dateFormat from "../../tools/customDate";
 import { customCopyObject } from "../../tools/customCopyObject";
 import { customHttpRequest } from "../../tools/customHttpRequest";
+import inventory from "../drawerPages/inventory";
 export default {
+  components: {
+    inventory
+  },
   data() {
     return {
+      items: ["producto 1", "producto 2", "producto 3"],
       purchase: [],
       total: 0,
       loadingButton: false,

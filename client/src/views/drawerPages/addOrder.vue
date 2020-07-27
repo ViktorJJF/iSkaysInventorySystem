@@ -1,71 +1,162 @@
 <template>
-  <custom-card title="Realizar venta" icon="mdi-plus">
-    <template v-slot:content>
-      <v-container>
-        <v-btn color="primary" @click="addOrder" class="mr-3 my-3">
-          <v-icon left>mdi-plus</v-icon>Agregar
-        </v-btn>
-        <v-btn color="primary" :to="{name:'orderHistory'}">
-          <v-icon left>mdi-magnify</v-icon>Ver historial
-        </v-btn>
-        <v-alert
-          class="my-5"
-          v-show="order.length==0"
-          type="success"
-          text
-        >Agrega productos a esta venta</v-alert>
-        <v-alert text type="error" :value="validateError">Es necesario agregar al menos 01 producto</v-alert>
-        <v-simple-table>
-          <template v-slot:default>
-            <thead>
-              <tr>
-                <th class="text-left">Producto</th>
-                <th class="text-left">Cantidad</th>
-                <th class="text-left">Precio</th>
-                <th class="text-left">Subtotal</th>
-                <th class="text-left">Eliminar producto</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(product,orderIndex) in order" :key="orderIndex">
-                <td>
-                  <v-container>
-                    <v-select
-                      placeholder="Seleccione el producto"
-                      :suffix="'Stock:'+ $store.getters.getproductStock(product.productId)"
-                      v-model="product.productId"
-                      :items="products"
-                      item-text="model"
-                      item-value="_id"
-                      @change="order[orderIndex].price=getProductPrice(product.productId)"
-                    ></v-select>
-                  </v-container>
-                </td>
-                <td>
-                  <v-text-field v-model="product.qty" type="number"></v-text-field>
-                </td>
-                <td>S/.{{product.price}}</td>
-                <td>S/.{{product.price*product.qty}}</td>
-                <td>
-                  <v-btn small color="error" @click="deleteOrder(orderIndex)">Eliminar</v-btn>
-                </td>
-              </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
-        <v-row justify="end" class="mr-3">
-          <v-card outlined color="light-green lighten-5" class="pa-3">
-            <strong class="mr-3">Total:</strong>
-            &nbsp;
-            <span class="total">S/.{{getTotal}}</span>
-          </v-card>
-        </v-row>
-        <v-alert text type="error" :value="stockError">La cantidad vendida no puede superar el stock</v-alert>
+  <div>
+    <custom-card title="Realizar venta sin código" icon="mdi-plus">
+      <template v-slot:content>
+        <v-container>
+          <v-btn color="primary" @click="addOrder" class="mr-3 my-3">
+            <v-icon left>mdi-plus</v-icon>Agregar
+          </v-btn>
+          <v-btn color="primary" :to="{name:'orderHistory'}" class="mr-3 my-3">
+            <v-icon left>mdi-magnify</v-icon>Ver historial
+          </v-btn>
+          <v-btn color="primary" @click="addpurchase" class="mr-3 my-3">
+            <v-icon left>mdi-plus</v-icon>Agregar Boleta
+          </v-btn>
+          <v-alert
+            class="my-5"
+            v-show="order.length==0"
+            type="success"
+            text
+          >Agrega productos a esta venta</v-alert>
+          <v-alert
+            text
+            type="error"
+            :value="validateError"
+          >Es necesario agregar al menos 01 producto</v-alert>
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left">Código</th>
+                  <th class="text-left">Cantidad</th>
+                  <th class="text-left">Precio</th>
+                  <th class="text-left">Subtotal</th>
+                  <th class="text-left">Eliminar producto</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(product,orderIndex) in order" :key="orderIndex">
+                  <td>
+                    <v-container>
+                      <v-select
+                        placeholder="Seleccione el producto"
+                        :suffix="'Stock:'+ $store.getters.getproductStock(product.productId)"
+                        v-model="product.productId"
+                        :items="products"
+                        item-text="model"
+                        item-value="_id"
+                        @change="order[orderIndex].price=getProductPrice(product.productId)"
+                      ></v-select>
+                    </v-container>
+                  </td>
+                  <td>
+                    <v-text-field v-model="product.qty" type="number"></v-text-field>
+                  </td>
+                  <td>S/.{{product.price}}</td>
+                  <td>S/.{{product.price*product.qty}}</td>
+                  <td>
+                    <v-btn small color="error" @click="deleteOrder(orderIndex)">Eliminar</v-btn>
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+          <v-row justify="end" class="mr-3">
+            <v-card outlined color="light-green lighten-5" class="pa-3">
+              <strong class="mr-3">Total:</strong>
+              &nbsp;
+              <span class="total">S/.{{getTotal}}</span>
+            </v-card>
+          </v-row>
+          <v-alert
+            text
+            type="error"
+            :value="stockError"
+          >La cantidad vendida no puede superar el stock</v-alert>
 
-        <v-btn :loading="loadingButton" color="success" @click="saveOrder">Guardar orden</v-btn>
-      </v-container>
-    </template>
-  </custom-card>
+          <v-btn :loading="loadingButton" color="success" @click="saveOrder">Guardar orden</v-btn>
+        </v-container>
+      </template>
+    </custom-card>
+    <custom-card title="Realizar venta con código" icon="mdi-plus">
+      <template v-slot:content>
+        <v-container>
+          <v-btn color="primary" @click="addOrder" class="mr-3 my-3">
+            <v-icon left>mdi-plus</v-icon>Agregar
+          </v-btn>
+          <v-btn color="primary" :to="{name:'orderHistory'}" class="mr-3 my-3">
+            <v-icon left>mdi-magnify</v-icon>Ver historial
+          </v-btn>
+          <v-btn color="primary" @click="addpurchase" class="mr-3 my-3">
+            <v-icon left>mdi-plus</v-icon>Agregar Boleta
+          </v-btn>
+          <v-alert
+            class="my-5"
+            v-show="order.length==0"
+            type="success"
+            text
+          >Agrega productos a esta venta</v-alert>
+          <v-alert
+            text
+            type="error"
+            :value="validateError"
+          >Es necesario agregar al menos 01 producto</v-alert>
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left">Código</th>
+                  <th class="text-left">Cantidad</th>
+                  <th class="text-left">Precio</th>
+                  <th class="text-left">Subtotal</th>
+                  <th class="text-left">Eliminar producto</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(product,orderIndex) in order" :key="orderIndex">
+                  <td>
+                    <v-container>
+                      <v-select
+                        placeholder="Seleccione el producto"
+                        :suffix="'Stock:'+ $store.getters.getproductStock(product.productId)"
+                        v-model="product.productId"
+                        :items="products"
+                        item-text="model"
+                        item-value="_id"
+                        @change="order[orderIndex].price=getProductPrice(product.productId)"
+                      ></v-select>
+                    </v-container>
+                  </td>
+                  <td>
+                    <v-text-field v-model="product.qty" type="number"></v-text-field>
+                  </td>
+                  <td>S/.{{product.price}}</td>
+                  <td>S/.{{product.price*product.qty}}</td>
+                  <td>
+                    <v-btn small color="error" @click="deleteOrder(orderIndex)">Eliminar</v-btn>
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+          <v-row justify="end" class="mr-3">
+            <v-card outlined color="light-green lighten-5" class="pa-3">
+              <strong class="mr-3">Total:</strong>
+              &nbsp;
+              <span class="total">S/.{{getTotal}}</span>
+            </v-card>
+          </v-row>
+          <v-alert
+            text
+            type="error"
+            :value="stockError"
+          >La cantidad vendida no puede superar el stock</v-alert>
+
+          <v-btn :loading="loadingButton" color="success" @click="saveOrder">Guardar orden</v-btn>
+        </v-container>
+      </template>
+    </custom-card>
+  </div>
 </template>
 
 <script>

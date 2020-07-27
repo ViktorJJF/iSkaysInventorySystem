@@ -86,6 +86,18 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+      <v-expansion-panels>
+        <v-expansion-panel v-for="(item,i) in 5" :key="i">
+          <v-expansion-panel-header>Productos sin registrar</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <v-text-field name="name" label="'label" id="id" outlined></v-text-field>
+            <v-text-field name="name" label="'label" id="id" outlined></v-text-field>
+            <v-text-field name="name" label="'label" id="id" outlined></v-text-field>
+            <v-text-field name="name" label="'label" id="id" outlined></v-text-field>
+            <v-btn color="success">Agregar</v-btn>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </template>
   </custom-card>
 </template>

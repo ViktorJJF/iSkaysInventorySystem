@@ -1,4 +1,4 @@
-const model = require("../models/Types.js");
+const model = require("../models/Messages.js");
 const utils = require("../helpers/utils");
 const db = require("../helpers/db");
 

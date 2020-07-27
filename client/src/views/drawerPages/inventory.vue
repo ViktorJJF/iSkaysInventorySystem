@@ -229,6 +229,15 @@
           </v-tab-item>
           <v-tab-item :value="'tab-' + 2">
             <v-card flat>
+              <p>
+                <b>Buscar por código</b>
+              </p>
+              <v-row>
+                <v-col cols="12" sm="6">
+                  <v-text-field name="name" label="label" id="id" outlined dense></v-text-field>
+                </v-col>
+                <v-btn color="success">Buscar</v-btn>
+              </v-row>
               <add-product></add-product>
             </v-card>
           </v-tab-item>
