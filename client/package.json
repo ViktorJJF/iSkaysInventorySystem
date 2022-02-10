@@ -13,7 +13,7 @@
         "chartist": "^0.11.4",
         "core-js": "^3.6.5",
         "material-design-icons-iconfont": "^5.0.1",
-        "node-sass": "^4.14.1",
+        "node-sass": "^7.0.0",
         "pusher-js": "^6.0.3",
         "roboto-fontface": "*",
         "sass": "^1.26.10",
